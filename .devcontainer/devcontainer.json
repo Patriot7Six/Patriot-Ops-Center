@@ -1,0 +1,67 @@
+{
+  "name": "Patriot Ops Center",
+  "image": "mcr.microsoft.com/devcontainers/typescript-node:1-20-bullseye",
+
+  // ── Features ───────────────────────────────────────────────────────────────
+  // Only using the verified official GitHub feature here.
+  // Doppler CLI and Stripe CLI are installed via postCreateCommand below
+  // using their official install scripts — no third-party features needed.
+  "features": {
+    "ghcr.io/devcontainers/features/github-cli:1": {}
+  },
+
+  // ── VS Code extensions auto-installed ──────────────────────────────────────
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "bradlc.vscode-tailwindcss",
+        "github.vscode-pull-request-github",
+        "eamodio.gitlens",
+        "mhutchie.git-graph",
+        "christian-kohler.path-intellisense",
+        "formulahendry.auto-rename-tag",
+        "streetsidesoftware.code-spell-checker",
+        "usernamehw.errorlens",
+        "aaron-bond.better-comments",
+        "supabase.vscode-supabase",
+        "mikestead.dotenv",
+        "chromatic.storybook-vscode"
+      ],
+      "settings": {
+        "typescript.tsdk": "node_modules/typescript/lib",
+        "typescript.enablePromptUseWorkspaceTsdk": true,
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "[typescriptreact]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+        "[typescript]":      { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+        "tailwindCSS.experimental.classRegex": [
+          ["cn\\(([^)]*)\\)",  "\"([^\"]*)\""],
+          ["cva\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"]
+        ],
+        "terminal.integrated.defaultProfile.linux": "bash",
+        "editor.tabSize": 2,
+        "editor.rulers": [100]
+      }
+    }
+  },
+
+  // ── Ports forwarded automatically ──────────────────────────────────────────
+  "forwardPorts": [3000, 6006, 54321, 54322],
+  "portsAttributes": {
+    "3000":  { "label": "Next.js App",      "onAutoForward": "openPreview" },
+    "6006":  { "label": "Storybook",        "onAutoForward": "notify"      },
+    "54321": { "label": "Supabase DB",      "onAutoForward": "silent"      },
+    "54322": { "label": "Supabase Studio",  "onAutoForward": "silent"      }
+  },
+
+  // ── Runs once when the container is first created ──────────────────────────
+  // Installs Doppler CLI, Stripe CLI, and project npm dependencies.
+  "postCreateCommand": "bash .devcontainer/install-tools.sh && npm install",
+
+  // ── Runs every time the container starts ───────────────────────────────────
+  "postStartCommand": "bash .devcontainer/post-start.sh",
+
+  "remoteUser": "node"
+}
