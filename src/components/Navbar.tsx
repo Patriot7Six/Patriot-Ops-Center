@@ -14,7 +14,7 @@ export function Navbar() {
 
         {/* ── Logo — uses real brand asset ── */}
         <Link href="/" className="flex items-center gap-2.5 shrink-0 no-underline">
-          <img src="/logo.png" alt="Patriot Ops Center logo" className="h-9 w-9 object-contain" />
+          <img src="/logo.svg" alt="Patriot Ops Center logo" className="h-14 w-14 object-contain" />
           <span className="font-extrabold text-base tracking-widest uppercase text-navy-50">
             Patriot <span className="text-gold-500">Ops</span> Center
           </span>

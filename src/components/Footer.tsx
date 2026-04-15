@@ -13,7 +13,7 @@ export function Footer() {
           {/* Brand col — real logo + tagline + VOB badge */}
           <div className="md:col-span-1">
             <Link href="/" className="inline-flex items-center gap-2.5 mb-3 no-underline">
-              <img src="/logo.png" alt="Patriot Ops Center logo" className="h-8 w-8 object-contain" />
+              <img src="/logo.svg" alt="Patriot Ops Center logo" className="h-12 w-12 object-contain" />
               <span className="font-extrabold text-base tracking-widest uppercase text-navy-50">
                 Patriot <span className="text-gold-500">Ops</span> Center
               </span>
@@ -101,7 +101,22 @@ export function Footer() {
             © {year} Patriot Ops Center. All rights reserved.
           </p>
           <div className="flex items-center gap-2 text-xs text-navy-500">
-            <span>🇺🇸</span>
+            <svg
+              viewBox="0 0 19 10"
+              aria-hidden="true"
+              className="h-[14px] w-[26px] shrink-0 rounded-[1px] ring-1 ring-black/20"
+            >
+              <rect width="19" height="10" fill="#B22234" />
+              <g fill="#fff">
+                <rect y="0.77" width="19" height="0.77" />
+                <rect y="2.31" width="19" height="0.77" />
+                <rect y="3.85" width="19" height="0.77" />
+                <rect y="5.38" width="19" height="0.77" />
+                <rect y="6.92" width="19" height="0.77" />
+                <rect y="8.46" width="19" height="0.77" />
+              </g>
+              <rect width="7.6" height="5.38" fill="#3C3B6E" />
+            </svg>
             <span>Built with pride for those who served</span>
           </div>
         </div>
