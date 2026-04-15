@@ -158,3 +158,97 @@ html {
 .delay-2 { animation-delay: 0.2s; opacity: 0; }
 .delay-3 { animation-delay: 0.3s; opacity: 0; }
 .delay-4 { animation-delay: 0.4s; opacity: 0; }
+
+/* ── Markdown prose (Claude-style response formatting) ───────────────────── */
+.md-prose { color: #e2e8f0; font-size: 0.9375rem; line-height: 1.65; }
+.md-prose > * + * { margin-top: 0.85em; }
+.md-prose h1, .md-prose h2, .md-prose h3, .md-prose h4 {
+  color: #fff; font-weight: 700; line-height: 1.3;
+  margin-top: 1.4em; margin-bottom: 0.5em;
+}
+.md-prose h1 { font-size: 1.375rem; }
+.md-prose h2 { font-size: 1.175rem; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 0.35em; }
+.md-prose h3 { font-size: 1.0625rem; color: var(--color-gold-300); }
+.md-prose h4 { font-size: 0.9375rem; color: var(--color-gold-200); }
+.md-prose p { margin: 0.6em 0; }
+.md-prose strong { color: #fff; font-weight: 600; }
+.md-prose em { color: #cbd5e1; }
+.md-prose ul, .md-prose ol { padding-left: 1.5em; margin: 0.6em 0; }
+.md-prose ul { list-style: disc; }
+.md-prose ol { list-style: decimal; }
+.md-prose li { margin: 0.3em 0; }
+.md-prose li::marker { color: var(--color-gold-400); }
+.md-prose a { color: var(--color-gold-300); text-decoration: underline; text-underline-offset: 2px; }
+.md-prose a:hover { color: var(--color-gold-200); }
+.md-prose blockquote {
+  border-left: 3px solid var(--color-gold-500);
+  padding: 0.25em 0 0.25em 1em;
+  color: #cbd5e1; font-style: italic;
+  background: rgba(255,255,255,0.02);
+  border-radius: 0 6px 6px 0;
+}
+.md-prose code {
+  background: rgba(255,255,255,0.08);
+  padding: 0.15em 0.4em;
+  border-radius: 4px;
+  font-size: 0.875em;
+  color: var(--color-gold-200);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+.md-prose pre {
+  background: rgba(0,0,0,0.35);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 8px; padding: 0.9em 1em;
+  overflow-x: auto; font-size: 0.85em;
+}
+.md-prose pre code { background: transparent; padding: 0; color: #e2e8f0; }
+.md-prose table {
+  width: 100%; border-collapse: collapse; font-size: 0.875em;
+  margin: 0.8em 0;
+}
+.md-prose th, .md-prose td {
+  border: 1px solid rgba(255,255,255,0.1);
+  padding: 0.5em 0.75em; text-align: left;
+}
+.md-prose th { background: rgba(255,255,255,0.04); color: #fff; font-weight: 600; }
+.md-prose hr { border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 1.2em 0; }
+
+/* ── Print / PDF export styles ───────────────────────────────────────────── */
+@media print {
+  @page { margin: 0.6in; size: letter; }
+  html, body { background: #fff !important; color: #111 !important; }
+  nav, footer, .no-print { display: none !important; }
+  .print-area { display: block !important; max-width: 100% !important; padding: 0 !important; }
+  .print-area .md-prose { color: #111 !important; font-size: 11pt; }
+  .print-area .md-prose h1, .print-area .md-prose h2,
+  .print-area .md-prose h3, .print-area .md-prose h4 { color: #000 !important; }
+  .print-area .md-prose h2 { border-bottom-color: #ccc !important; }
+  .print-area .md-prose h3 { color: #7a4a00 !important; }
+  .print-area .md-prose h4 { color: #7a4a00 !important; }
+  .print-area .md-prose strong { color: #000 !important; }
+  .print-area .md-prose em { color: #333 !important; }
+  .print-area .md-prose code { background: #f2f2f2 !important; color: #7a4a00 !important; }
+  .print-area .md-prose pre { background: #f6f6f6 !important; border-color: #ddd !important; }
+  .print-area .md-prose pre code { color: #111 !important; }
+  .print-area .md-prose blockquote {
+    border-left-color: #d97706 !important;
+    color: #333 !important; background: #fafafa !important;
+  }
+  .print-area .md-prose a { color: #7a4a00 !important; }
+  .print-area .md-prose th { background: #f2f2f2 !important; color: #000 !important; }
+  .print-area .md-prose th, .print-area .md-prose td { border-color: #ccc !important; }
+  .print-bubble {
+    background: #fff !important;
+    border: 1px solid #ddd !important;
+    page-break-inside: avoid;
+    max-width: 100% !important;
+    margin-bottom: 12pt;
+  }
+  .print-bubble-user {
+    background: #fff8e6 !important;
+    border-left: 3px solid #d97706 !important;
+  }
+  .print-label { display: block !important; }
+  .print-header { display: block !important; }
+}
+.print-label, .print-header { display: none; }
