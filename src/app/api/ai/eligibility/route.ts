@@ -1,4 +1,4 @@
-import { anthropic, MODEL, SYSTEM_BASE, streamText } from '@/lib/anthropic'
+import { getAnthropic, MODEL, SYSTEM_BASE, streamText } from '@/lib/anthropic'
 import { checkAiRateLimit, rateLimitHeaders, rateLimitResponse } from '@/lib/ratelimit'
 
 export const runtime = 'edge'
@@ -21,7 +21,7 @@ export async function POST(req: Request) {
 
   const { messages } = await req.json()
 
-  const stream = await anthropic.messages.stream({
+  const stream = await getAnthropic().messages.stream({
     model: MODEL,
     max_tokens: 1500,
     system: SYSTEM,
