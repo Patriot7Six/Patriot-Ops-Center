@@ -7,6 +7,7 @@ import { Navbar } from '@/components/Navbar'
 import { Footer } from '@/components/Footer'
 import { Button } from '@/components/ui/Button'
 import { Spinner } from '@/components/ui/Spinner'
+import { FreeUsageBadge, useFreeUsage } from '@/components/FreeUsageBadge'
 
 interface Message {
   role: 'user' | 'assistant'
@@ -25,6 +26,7 @@ export default function EligibilityPage() {
   const [input, setInput] = useState('')
   const [isStreaming, setIsStreaming] = useState(false)
   const bottomRef = useRef<HTMLDivElement>(null)
+  const { usage, updateFromResponse } = useFreeUsage()
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -48,6 +50,18 @@ export default function EligibilityPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ messages: newMessages }),
       })
+
+      updateFromResponse(res)
+
+      if (res.status === 429) {
+        const text = await res.text()
+        setMessages(prev => {
+          const updated = [...prev]
+          updated[updated.length - 1] = { role: 'assistant', content: text }
+          return updated
+        })
+        return
+      }
 
       if (!res.body) throw new Error('No response body')
 
@@ -139,6 +153,8 @@ export default function EligibilityPage() {
                   Tell me about your military service and I&apos;ll analyze every VA benefit you qualify for — instantly.
                 </p>
 
+                <FreeUsageBadge usage={usage} />
+
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-left">
                   {STARTER_QUESTIONS.map(q => (
                     <button
@@ -228,6 +244,7 @@ export default function EligibilityPage() {
               )}
             </Button>
           </div>
+          {messages.length > 0 && <div className="max-w-3xl mx-auto mt-3"><FreeUsageBadge usage={usage} /></div>}
           <p className="text-center text-xs text-slate-700 mt-2">
             AI responses are informational only. Always verify with an accredited VSO or VA.gov.
           </p>

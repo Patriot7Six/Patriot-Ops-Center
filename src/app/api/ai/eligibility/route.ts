@@ -1,5 +1,5 @@
 import { anthropic, MODEL, SYSTEM_BASE, streamText } from '@/lib/anthropic'
-import { checkAiRateLimit, rateLimitResponse } from '@/lib/ratelimit'
+import { checkAiRateLimit, rateLimitHeaders, rateLimitResponse } from '@/lib/ratelimit'
 
 export const runtime = 'edge'
 
@@ -29,6 +29,6 @@ export async function POST(req: Request) {
   })
 
   return new Response(streamText(stream), {
-    headers: { 'Content-Type': 'text/plain; charset=utf-8' },
+    headers: { 'Content-Type': 'text/plain; charset=utf-8', ...rateLimitHeaders(rl) },
   })
 }
