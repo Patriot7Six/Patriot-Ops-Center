@@ -1,4 +1,5 @@
 import { anthropic, MODEL, SYSTEM_BASE, streamText } from '@/lib/anthropic'
+import { checkAiRateLimit, rateLimitResponse } from '@/lib/ratelimit'
 
 export const runtime = 'edge'
 
@@ -15,6 +16,9 @@ When analyzing eligibility:
 6. End every analysis with the top 3 "quick wins" — benefits with the highest value and easiest path to approval`
 
 export async function POST(req: Request) {
+  const rl = await checkAiRateLimit(req)
+  if (!rl.success) return rateLimitResponse(rl)
+
   const { messages } = await req.json()
 
   const stream = await anthropic.messages.stream({

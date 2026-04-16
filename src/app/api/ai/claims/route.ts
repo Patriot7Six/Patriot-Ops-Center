@@ -1,4 +1,5 @@
 import { anthropic, MODEL, SYSTEM_BASE, streamText } from '@/lib/anthropic'
+import { checkAiRateLimit, rateLimitResponse } from '@/lib/ratelimit'
 
 export const runtime = 'edge'
 
@@ -18,6 +19,9 @@ When assisting with claims:
 Be specific and actionable. Give exact form numbers (e.g., VA Form 21-526EZ), deadlines, and official VA links where possible.`
 
 export async function POST(req: Request) {
+  const rl = await checkAiRateLimit(req)
+  if (!rl.success) return rateLimitResponse(rl)
+
   const { messages } = await req.json()
 
   const stream = await anthropic.messages.stream({

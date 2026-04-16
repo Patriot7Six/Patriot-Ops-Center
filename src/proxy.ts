@@ -35,6 +35,7 @@ export async function proxy(request: NextRequest) {
     PUBLIC_ROUTES.some(r => pathname === r || pathname.startsWith(r + '/')) ||
     pathname.startsWith('/api/stripe') ||
     pathname.startsWith('/api/auth') ||
+    pathname.startsWith('/api/ai') ||
     pathname.startsWith('/_next') ||
     pathname.startsWith('/favicon')
 
