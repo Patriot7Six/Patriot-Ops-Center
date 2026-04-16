@@ -1,6 +1,5 @@
 import { NextResponse, type NextRequest } from 'next/server'
-import { stripe } from '@/lib/stripe'
-import { PLANS } from '@/lib/stripe'
+import { getStripe, PLANS } from '@/lib/stripe'
 import { createClient } from '@/lib/supabase/server'
 
 // Beta: https://beta.patriot-ops.com — Production: https://patriot-ops.com
@@ -39,7 +38,7 @@ export async function POST(request: NextRequest) {
         .eq('id', user.id)
         .single()
 
-      const customer = await stripe.customers.create({
+      const customer = await getStripe().customers.create({
         email: user.email,
         name: profile?.full_name ?? undefined,
         metadata: { user_id: user.id },
@@ -52,7 +51,7 @@ export async function POST(request: NextRequest) {
         .eq('user_id', user.id)
     }
 
-    const session = await stripe.checkout.sessions.create({
+    const session = await getStripe().checkout.sessions.create({
       customer: customerId,
       mode: 'subscription',
       payment_method_types: ['card'],
