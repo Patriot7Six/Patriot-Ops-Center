@@ -101,7 +101,7 @@ export default function EligibilityPage() {
   return (
     <>
       <div className="no-print"><Navbar /></div>
-      <main className="pt-16 min-h-screen flex flex-col">
+      <main className={`pt-16 flex flex-col ${messages.length > 0 ? 'min-h-screen' : ''}`}>
         {/* Header */}
         <div className="border-b border-white/[0.06] px-4 py-5 no-print">
           <div className="max-w-3xl mx-auto flex items-center gap-3">
@@ -131,8 +131,8 @@ export default function EligibilityPage() {
         </div>
 
         {/* Chat area */}
-        <div className="flex-1 overflow-y-auto">
-          <div className="max-w-3xl mx-auto px-4 py-8 space-y-6 print-area">
+        <div className={messages.length > 0 ? 'flex-1 overflow-y-auto' : ''}>
+          <div className={`max-w-3xl mx-auto px-4 space-y-6 print-area ${messages.length > 0 ? 'py-8' : 'py-4'}`}>
             {/* Print-only header */}
             <div className="print-header mb-6 pb-4 border-b border-slate-300">
               <h1 className="text-2xl font-bold text-black">VA Eligibility Analysis</h1>
@@ -142,14 +142,14 @@ export default function EligibilityPage() {
             </div>
 
             {messages.length === 0 && (
-              <div className="text-center py-12 no-print">
-                <div className="w-14 h-14 rounded-2xl bg-gold-500/10 border border-gold-500/20 flex items-center justify-center mx-auto mb-5">
+              <div className="text-center py-6 no-print">
+                <div className="w-14 h-14 rounded-2xl bg-gold-500/10 border border-gold-500/20 flex items-center justify-center mx-auto mb-4">
                   <svg className="w-7 h-7 text-gold-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                   </svg>
                 </div>
                 <h2 className="text-2xl font-extrabold text-white mb-2">Check Your Eligibility</h2>
-                <p className="text-slate-400 text-sm max-w-md mx-auto mb-8">
+                <p className="text-slate-400 text-sm max-w-md mx-auto mb-5">
                   Tell me about your military service and I&apos;ll analyze every VA benefit you qualify for — instantly.
                 </p>
 
