@@ -1,5 +1,5 @@
 'use client'
-import { useState, useTransition } from 'react'
+import { Suspense, useState, useTransition } from 'react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
@@ -10,6 +10,14 @@ import { Spinner } from '@/components/ui/Spinner'
 type Mode = 'password' | 'magic'
 
 export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="flex justify-center py-10"><Spinner size="md" /></div>}>
+      <LoginForm />
+    </Suspense>
+  )
+}
+
+function LoginForm() {
   const router = useRouter()
   const params = useSearchParams()
   const redirectTo = params.get('redirectTo') ?? '/dashboard'
