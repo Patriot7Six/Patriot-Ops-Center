@@ -1,6 +1,14 @@
 import { Resend } from 'resend'
 
-export const resend = new Resend(process.env.RESEND_API_KEY)
+let _resend: Resend | null = null
+function getResend(): Resend {
+  if (!_resend) {
+    const key = process.env.RESEND_API_KEY
+    if (!key) throw new Error('RESEND_API_KEY is not set')
+    _resend = new Resend(key)
+  }
+  return _resend
+}
 
 // Resend verified sending domain is email.patriot-ops.com
 // Verify this subdomain in Resend dashboard → Domains → Add domain → email.patriot-ops.com
@@ -63,7 +71,7 @@ const btn = (href: string, label: string) =>
 // ── Email senders ─────────────────────────────────────────────────────────────
 
 export async function sendWelcomeEmail(to: string, firstName: string) {
-  return resend.emails.send({
+  return getResend().emails.send({
     from: FROM,
     to,
     subject: 'Welcome to Patriot Ops Center',
@@ -78,7 +86,7 @@ export async function sendWelcomeEmail(to: string, firstName: string) {
 }
 
 export async function sendMagicLinkEmail(to: string, magicLink: string) {
-  return resend.emails.send({
+  return getResend().emails.send({
     from: FROM,
     to,
     subject: 'Your Patriot Ops Center sign-in link',
@@ -97,7 +105,7 @@ export async function sendSubscriptionEmail(
   planName: string,
   nextBillingDate: string,
 ) {
-  return resend.emails.send({
+  return getResend().emails.send({
     from: FROM,
     to,
     subject: `You're now on the ${planName} plan`,
@@ -112,7 +120,7 @@ export async function sendSubscriptionEmail(
 }
 
 export async function sendOnboardingCompleteEmail(to: string, firstName: string) {
-  return resend.emails.send({
+  return getResend().emails.send({
     from: FROM,
     to,
     subject: 'Your Patriot Ops profile is complete',
