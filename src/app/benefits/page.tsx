@@ -18,6 +18,8 @@ export const metadata: Metadata = {
   description: 'Browse all VA, DoD, and state veteran benefits in one place.',
 }
 
+export const dynamic = 'force-dynamic'
+
 const CATEGORIES = [
   {
     slug: 'disability',
