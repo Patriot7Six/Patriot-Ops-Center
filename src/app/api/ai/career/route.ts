@@ -1,4 +1,4 @@
-import { anthropic, MODEL, SYSTEM_BASE, streamText } from '@/lib/anthropic'
+import { getAnthropic, MODEL, SYSTEM_BASE, streamText } from '@/lib/anthropic'
 
 export const runtime = 'edge'
 
@@ -54,7 +54,7 @@ export async function POST(req: Request) {
     mode === 'resume' ? SYSTEM_RESUME :
     SYSTEM_CAREER_CHAT
 
-  const stream = await anthropic.messages.stream({
+  const stream = await getAnthropic().messages.stream({
     model: MODEL,
     max_tokens: 2000,
     system,
