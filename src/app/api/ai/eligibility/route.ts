@@ -1,5 +1,8 @@
+// src/app/api/ai/eligibility/route.ts — replaces sprint2 version
 import { getAnthropic, MODEL, SYSTEM_BASE, streamText } from '@/lib/anthropic'
-import { checkAiRateLimit, rateLimitHeaders, rateLimitResponse } from '@/lib/ratelimit'
+import { createClient } from '@/lib/supabase/server'
+import { checkRateLimit, rateLimitHeaders } from '@/lib/ratelimit'
+import type { SubscriptionTier } from '@/types/database'
 
 export const runtime = 'edge'
 
@@ -16,19 +19,55 @@ When analyzing eligibility:
 6. End every analysis with the top 3 "quick wins" — benefits with the highest value and easiest path to approval`
 
 export async function POST(req: Request) {
-  const rl = await checkAiRateLimit(req)
-  if (!rl.success) return rateLimitResponse(rl)
+  try {
+    // Get authenticated user and their subscription tier
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
 
-  const { messages } = await req.json()
+    if (!user) {
+      return new Response('Unauthorized', { status: 401 })
+    }
 
-  const stream = await getAnthropic().messages.stream({
-    model: MODEL,
-    max_tokens: 1500,
-    system: SYSTEM,
-    messages,
-  })
+    const { data: subscription } = await supabase
+      .from('subscriptions')
+      .select('tier, status')
+      .eq('user_id', user.id)
+      .single()
 
-  return new Response(streamText(stream), {
-    headers: { 'Content-Type': 'text/plain; charset=utf-8', ...rateLimitHeaders(rl) },
-  })
+    const isActive = ['active', 'trialing'].includes(subscription?.status ?? '')
+    const tier = (isActive ? subscription?.tier : 'free') as SubscriptionTier ?? 'free'
+
+    // Check rate limit
+    const rateResult = await checkRateLimit(user.id, tier)
+    const headers = rateLimitHeaders(rateResult)
+
+    if (!rateResult.success) {
+      return new Response(
+        JSON.stringify({
+          error: 'Rate limit exceeded',
+          message: tier === 'free'
+            ? 'You\'ve reached your daily limit of 10 AI requests. Upgrade to Ranger for 100/day.'
+            : `You've reached your daily limit. Resets at ${new Date(rateResult.reset).toLocaleTimeString()}.`,
+          reset: rateResult.reset,
+        }),
+        { status: 429, headers: { 'Content-Type': 'application/json', ...headers } },
+      )
+    }
+
+    const { messages } = await req.json()
+
+    const stream = await getAnthropic().messages.stream({
+      model: MODEL,
+      max_tokens: 1500,
+      system: SYSTEM,
+      messages,
+    })
+
+    return new Response(streamText(stream), {
+      headers: { 'Content-Type': 'text/plain; charset=utf-8', ...headers },
+    })
+  } catch (err) {
+    console.error('Eligibility route error:', err)
+    return new Response('Internal server error', { status: 500 })
+  }
 }

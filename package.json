@@ -9,12 +9,17 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
+    "@amplitude/analytics-browser": "^2.40.0",
     "@anthropic-ai/sdk": "^0.39.0",
     "@radix-ui/react-slot": "^1.2.4",
+    "@sentry/nextjs": "^10.49.0",
     "@supabase/ssr": "^0.6.1",
     "@supabase/supabase-js": "^2.103.2",
+    "@trigger.dev/sdk": "4.4.0",
     "@upstash/ratelimit": "^2.0.8",
     "@upstash/redis": "^1.37.0",
+    "@vercel/analytics": "^2.0.1",
+    "@vercel/speed-insights": "^2.0.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^0.503.0",
@@ -28,6 +33,7 @@
     "tailwind-merge": "^3.5.0"
   },
   "devDependencies": {
+    "@storybook/nextjs": "^10.3.5",
     "@tailwindcss/postcss": "^4.2.2",
     "@types/node": "^20",
     "@types/react": "^19",

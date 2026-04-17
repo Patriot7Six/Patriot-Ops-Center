@@ -78,5 +78,6 @@ dist/
 tmp/
 temp/
 .documents
+.docs
 
 package-lock.json

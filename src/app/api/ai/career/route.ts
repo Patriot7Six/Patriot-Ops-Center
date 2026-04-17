@@ -1,4 +1,8 @@
+// src/app/api/ai/career/route.ts — replaces sprint5 version
 import { getAnthropic, MODEL, SYSTEM_BASE, streamText } from '@/lib/anthropic'
+import { createClient } from '@/lib/supabase/server'
+import { checkRateLimit, rateLimitHeaders } from '@/lib/ratelimit'
+import type { SubscriptionTier } from '@/types/database'
 
 export const runtime = 'edge'
 
@@ -14,9 +18,8 @@ When given a military role:
 5. Give an honest realistic salary range for entry-level to experienced civilian roles
 6. Mention any veteran preference programs relevant to that career field
 
-Be specific. "Project Manager" is not specific enough — say "Junior Project Manager in IT/Government Contracting (GS-7 to GS-11 if pursuing federal)."
-
-Format output with clear sections and use bullet points.`
+Be specific. "Project Manager" is not specific enough — say "Junior Project Manager in IT/Government Contracting."
+Format output with clear sections and bullet points.`
 
 const SYSTEM_RESUME = `${SYSTEM_BASE}
 
@@ -30,38 +33,80 @@ When analyzing a resume or resume description:
 5. Suggest a civilian summary/objective paragraph tailored to their target role
 6. Recommend a clear format: reverse-chronological, skills-based, or hybrid
 
-Be direct and constructive. Give specific rewrites, not just vague suggestions.`
+Be direct and constructive. Give specific rewrites, not vague suggestions.`
 
 const SYSTEM_CAREER_CHAT = `${SYSTEM_BASE}
 
 You are a career transition coach for veterans. Your focus is practical, actionable guidance on:
 - Networking strategies in civilian environments
-- Interview preparation for veterans (translating experience without military context)
+- Interview preparation for veterans
 - Federal vs private sector trade-offs
-- GS-schedule vs contracting vs private industry pay
 - Using LinkedIn effectively as a veteran
 - Leveraging veteran hiring preferences (Schedule A, VOW Act, VetSuccess)
 - Education decisions: GI Bill, certifications vs degrees
-- Handling gaps, OTH discharges, or other complications in job search
+- Handling gaps, OTH discharges, or complications in job search
 
-Give honest, specific advice. Don't sugarcoat challenges — veterans appreciate directness.`
+Give honest, specific advice. Veterans appreciate directness.`
 
 export async function POST(req: Request) {
-  const { messages, mode } = await req.json()
+  try {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
 
-  const system =
-    mode === 'mos' ? SYSTEM_MOS :
-    mode === 'resume' ? SYSTEM_RESUME :
-    SYSTEM_CAREER_CHAT
+    if (!user) {
+      return new Response('Unauthorized', { status: 401 })
+    }
 
-  const stream = await getAnthropic().messages.stream({
-    model: MODEL,
-    max_tokens: 2000,
-    system,
-    messages,
-  })
+    const { data: subscription } = await supabase
+      .from('subscriptions')
+      .select('tier, status')
+      .eq('user_id', user.id)
+      .single()
 
-  return new Response(streamText(stream), {
-    headers: { 'Content-Type': 'text/plain; charset=utf-8' },
-  })
+    const isActive = ['active', 'trialing'].includes(subscription?.status ?? '')
+    const tier = (isActive ? subscription?.tier : 'free') as SubscriptionTier ?? 'free'
+
+    // Career toolkit is Pro/Elite only — check feature access
+    if (tier === 'free') {
+      return new Response(
+        JSON.stringify({ error: 'Upgrade required', message: 'Career Toolkit requires Ranger or higher.' }),
+        { status: 403, headers: { 'Content-Type': 'application/json' } },
+      )
+    }
+
+    const rateResult = await checkRateLimit(user.id, tier)
+    const headers = rateLimitHeaders(rateResult)
+
+    if (!rateResult.success) {
+      return new Response(
+        JSON.stringify({
+          error: 'Rate limit exceeded',
+          message: `Daily limit reached. Resets at ${new Date(rateResult.reset).toLocaleTimeString()}.`,
+          reset: rateResult.reset,
+        }),
+        { status: 429, headers: { 'Content-Type': 'application/json', ...headers } },
+      )
+    }
+
+    const { messages, mode } = await req.json()
+
+    const system =
+      mode === 'mos'    ? SYSTEM_MOS :
+      mode === 'resume' ? SYSTEM_RESUME :
+      SYSTEM_CAREER_CHAT
+
+    const stream = await getAnthropic().messages.stream({
+      model: MODEL,
+      max_tokens: 2000,
+      system,
+      messages,
+    })
+
+    return new Response(streamText(stream), {
+      headers: { 'Content-Type': 'text/plain; charset=utf-8', ...headers },
+    })
+  } catch (err) {
+    console.error('Career route error:', err)
+    return new Response('Internal server error', { status: 500 })
+  }
 }

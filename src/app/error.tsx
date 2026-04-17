@@ -1,5 +1,6 @@
 'use client'
 import { useEffect } from 'react'
+import * as Sentry from '@sentry/nextjs'
 import Link from 'next/link'
 import { Button } from '@/components/ui/Button'
 
@@ -10,8 +11,10 @@ interface Props {
 
 export default function GlobalError({ error, reset }: Props) {
   useEffect(() => {
-    // Log to your error tracking service (e.g. Sentry) here
-    console.error('Global error:', error)
+    Sentry.captureException(error, {
+      tags: { component: 'GlobalErrorBoundary' },
+      extra: { digest: error.digest },
+    })
   }, [error])
 
   return (
@@ -26,13 +29,12 @@ export default function GlobalError({ error, reset }: Props) {
 
         <h1 className="text-2xl font-extrabold text-white mb-2">Something went wrong</h1>
         <p className="text-slate-400 text-sm mb-8 leading-relaxed">
-          We hit an unexpected error. Our team has been notified. Try refreshing the page — if the problem persists, contact support.
+          We hit an unexpected error. Our team has been automatically notified.
+          Try refreshing the page — if the problem persists, contact support.
         </p>
 
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
-          <Button onClick={reset} size="md">
-            Try again
-          </Button>
+          <Button onClick={reset} size="md">Try again</Button>
           <Button variant="secondary" size="md" asChild>
             <Link href="/dashboard">Back to dashboard</Link>
           </Button>
