@@ -81,6 +81,15 @@ export async function POST(request: NextRequest) {
 
       case 'customer.subscription.deleted': {
         const sub = event.data.object as Stripe.Subscription
+        const customerId = sub.customer as string
+
+        // Look up the user BEFORE downgrading so we can email them with tier context
+        const { data: subRecord } = await supabase
+          .from('subscriptions')
+          .select('user_id, tier')
+          .eq('stripe_customer_id', customerId)
+          .single()
+
         await supabase
           .from('subscriptions')
           .update({
@@ -91,16 +100,80 @@ export async function POST(request: NextRequest) {
             cancel_at_period_end: false,
             updated_at: new Date().toISOString(),
           })
-          .eq('stripe_customer_id', sub.customer as string)
+          .eq('stripe_customer_id', customerId)
+
+        if (subRecord) {
+          try {
+            const { cancellationFollowUpJob } = await import(
+              '../../../../../trigger/jobs/subscriptions'
+            )
+            const { data: { user } } = await supabase.auth.admin.getUserById(subRecord.user_id)
+            const { data: profile } = await supabase
+              .from('profiles')
+              .select('full_name')
+              .eq('id', subRecord.user_id)
+              .single()
+
+            if (user?.email) {
+              await cancellationFollowUpJob.trigger({
+                userId: subRecord.user_id,
+                email: user.email,
+                fullName: profile?.full_name ?? '',
+                tier: subRecord.tier,
+                canceledAt: new Date().toISOString(),
+              })
+            }
+          } catch (triggerErr) {
+            console.error('cancellationFollowUpJob enqueue failed:', triggerErr)
+          }
+        }
         break
       }
 
       case 'invoice.payment_failed': {
         const invoice = event.data.object as Stripe.Invoice
+        const customerId = invoice.customer as string
+
         await supabase
           .from('subscriptions')
           .update({ status: 'past_due', updated_at: new Date().toISOString() })
-          .eq('stripe_customer_id', invoice.customer as string)
+          .eq('stripe_customer_id', customerId)
+
+        try {
+          // Stripe exposes attempt_count on the invoice — clamp to our 1-3 range
+          const raw = (invoice as unknown as { attempt_count?: number }).attempt_count ?? 1
+          const attemptNumber = (Math.min(3, Math.max(1, raw)) as 1 | 2 | 3)
+
+          const { data: subRecord } = await supabase
+            .from('subscriptions')
+            .select('user_id, tier')
+            .eq('stripe_customer_id', customerId)
+            .single()
+
+          if (subRecord) {
+            const { failedPaymentDunningJob } = await import(
+              '../../../../../trigger/jobs/subscriptions'
+            )
+            const { data: { user } } = await supabase.auth.admin.getUserById(subRecord.user_id)
+            const { data: profile } = await supabase
+              .from('profiles')
+              .select('full_name')
+              .eq('id', subRecord.user_id)
+              .single()
+
+            if (user?.email) {
+              await failedPaymentDunningJob.trigger({
+                userId: subRecord.user_id,
+                email: user.email,
+                fullName: profile?.full_name ?? '',
+                tier: subRecord.tier,
+                attemptNumber,
+              })
+            }
+          }
+        } catch (triggerErr) {
+          console.error('failedPaymentDunningJob enqueue failed:', triggerErr)
+        }
         break
       }
     }

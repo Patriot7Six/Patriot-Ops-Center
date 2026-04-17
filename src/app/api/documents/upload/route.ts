@@ -1,5 +1,7 @@
 import { NextResponse, type NextRequest } from 'next/server'
 import { createClient, createServiceClient } from '@/lib/supabase/server'
+import { checkRateLimit, rateLimitHeaders } from '@/lib/ratelimit'
+import type { SubscriptionTier } from '@/types/database'
 
 export async function POST(request: NextRequest) {
   try {
@@ -15,10 +17,26 @@ export async function POST(request: NextRequest) {
       .single()
 
     const isActive = ['active', 'trialing'].includes(subscription?.status ?? '')
-    const hasTier = isActive && (subscription?.tier === 'pro' || subscription?.tier === 'elite')
+    const tier = ((isActive ? subscription?.tier : 'free') as SubscriptionTier) ?? 'free'
+    const hasTier = tier === 'pro' || tier === 'elite'
 
     if (!hasTier) {
       return NextResponse.json({ error: 'Upgrade required' }, { status: 403 })
+    }
+
+    // Rate-limit uploads the same way we rate-limit AI requests — a single
+    // upload causes an automatic AI analysis job to run, so it should cost
+    // one unit against the user's quota.
+    const rateResult = await checkRateLimit(user.id, tier)
+    if (!rateResult.success) {
+      return NextResponse.json(
+        {
+          error: 'Rate limit exceeded',
+          message: `Daily limit reached. Resets at ${new Date(rateResult.reset).toLocaleTimeString()}.`,
+          reset: rateResult.reset,
+        },
+        { status: 429, headers: rateLimitHeaders(rateResult) },
+      )
     }
 
     const formData = await request.formData()
@@ -55,14 +73,36 @@ export async function POST(request: NextRequest) {
         storage_path: storagePath,
         mime_type: file.type,
         size_bytes: file.size,
-        status: 'ready',
+        // Kick off as 'queued' so the UI can show a pending state
+        // until the Trigger.dev job picks it up and flips to 'analyzing'.
+        status: 'queued',
       })
       .select()
       .single()
 
     if (dbError) throw dbError
 
-    return NextResponse.json({ document: doc })
+    // Fire the background AI-analysis Trigger job. We don't await it — the
+    // task runs on Trigger.dev infrastructure and updates the DB record
+    // when complete. If the trigger call itself fails, we just leave the
+    // doc as 'queued' and surface an on-demand re-analyze button in the UI.
+    try {
+      const { analyzeDocumentJob } = await import('../../../../../trigger/jobs/documents')
+      await analyzeDocumentJob.trigger({
+        documentId: doc.id,
+        storagePath,
+        mimeType: file.type,
+        documentName: file.name,
+        userId: user.id,
+      })
+    } catch (triggerErr) {
+      console.error('Failed to enqueue analyzeDocumentJob:', triggerErr)
+    }
+
+    return NextResponse.json({
+      document: doc,
+      rateLimit: rateLimitHeaders(rateResult),
+    })
   } catch (err) {
     console.error('Upload error:', err)
     return NextResponse.json({ error: 'Upload failed' }, { status: 500 })
