@@ -1,11 +1,13 @@
 // src/lib/resend-audiences.ts
-import { Resend } from 'resend'
-
-const resend = new Resend(process.env.RESEND_API_KEY)
+import { getResend } from './resend'
 
 // Audience ID created in Resend Dashboard → Audiences → "Launch Waitlist"
 // Add RESEND_AUDIENCE_ID to Doppler after creating the audience.
-const AUDIENCE_ID = process.env.RESEND_AUDIENCE_ID!
+function getAudienceId(): string {
+  const id = process.env.RESEND_AUDIENCE_ID
+  if (!id) throw new Error('RESEND_AUDIENCE_ID is not set')
+  return id
+}
 
 /**
  * Add a contact to the Resend audience.
@@ -16,8 +18,9 @@ export async function addToAudience(params: {
   firstName?: string
   lastName?: string
 }) {
-  return resend.contacts.create({
-    audienceId: AUDIENCE_ID,
+  const audienceId = getAudienceId()
+  return getResend().contacts.create({
+    audienceId,
     email: params.email,
     firstName: params.firstName,
     lastName: params.lastName,
@@ -30,13 +33,14 @@ export async function addToAudience(params: {
  * Call when a user deletes their account.
  */
 export async function removeFromAudience(email: string) {
-  // First find contact by email to get their ID
-  const { data: contacts } = await resend.contacts.list({ audienceId: AUDIENCE_ID })
+  const audienceId = getAudienceId()
+  const resend = getResend()
+  const { data: contacts } = await resend.contacts.list({ audienceId })
   const contact = contacts?.data?.find(c => c.email === email)
   if (!contact) return
 
   return resend.contacts.remove({
-    audienceId: AUDIENCE_ID,
+    audienceId,
     id: contact.id,
   })
 }
@@ -45,12 +49,14 @@ export async function removeFromAudience(email: string) {
  * Mark a contact as unsubscribed (soft remove — keeps the record).
  */
 export async function unsubscribeFromAudience(email: string) {
-  const { data: contacts } = await resend.contacts.list({ audienceId: AUDIENCE_ID })
+  const audienceId = getAudienceId()
+  const resend = getResend()
+  const { data: contacts } = await resend.contacts.list({ audienceId })
   const contact = contacts?.data?.find(c => c.email === email)
   if (!contact) return
 
   return resend.contacts.update({
-    audienceId: AUDIENCE_ID,
+    audienceId,
     id: contact.id,
     unsubscribed: true,
   })
@@ -63,8 +69,8 @@ export async function unsubscribeFromAudience(email: string) {
 export async function sendLaunchAnnouncement() {
   const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://patriot-ops.com'
 
-  return resend.broadcasts.create({
-    audienceId: AUDIENCE_ID,
+  return getResend().broadcasts.create({
+    audienceId: getAudienceId(),
     from: 'Patriot Ops Center <no-reply@email.patriot-ops.com>',
     subject: 'Patriot Ops Center is live — your free account is waiting',
     html: `
