@@ -1,0 +1,18 @@
+// trigger/config.ts
+import { defineConfig } from '@trigger.dev/sdk/v3'
+
+export default defineConfig({
+  project: 'patriot-ops-center',
+  dirs: ['./trigger/jobs'],
+  maxDuration: 300,
+  retries: {
+    enabledInDev: false,
+    default: {
+      maxAttempts: 3,
+      minTimeoutInMs: 1000,
+      maxTimeoutInMs: 10000,
+      factor: 2,
+      randomize: true,
+    },
+  },
+})
