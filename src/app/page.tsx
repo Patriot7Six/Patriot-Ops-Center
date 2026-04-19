@@ -166,7 +166,6 @@ export default function HomePage() {
                       ['VA Eligibility Checker', 'Discover every benefit you\'ve earned based on service'],
                       ['Claims Copilot', 'AI-guided walkthrough for filing and tracking VA claims'],
                       ['1-Year Transition Timeline', 'Interactive checklist from active duty to civilian life'],
-                      ['DD214 Upload & Parsing', 'Extract and interpret your service record automatically'],
                       ['Document Vault', 'Secure storage for separation docs, VA correspondence, and more'],
                       ['VSO & Legal Referrals', 'Connect to vetted advocates in your area'],
                     ].map(([title, desc]) => (
@@ -206,6 +205,7 @@ export default function HomePage() {
                 <div className="p-8">
                   <ul className="space-y-3">
                     {[
+                      ['DD214 Upload & Parsing', 'Auto-extract MOS, rank, and qualifications from your service record (rate-limited by tier)'],
                       ['MOS Translator', 'Convert military occupational codes to civilian job titles and skills'],
                       ['AI Resume Generator', 'ATS-optimized resumes from your service record (1 free)'],
                       ['Interview Prep Coach', 'STAR method practice with AI feedback on military-to-civilian framing'],
@@ -418,7 +418,7 @@ export default function HomePage() {
                     ['check', 'Full Benefits Navigator'],
                     ['check', 'Claims Copilot'],
                     ['check', '1-Year Transition Timeline'],
-                    ['check', 'DD214 Upload & Parse'],
+                    ['check', '1 DD214 Upload & Parse'],
                     ['check', '1 AI Resume Generation'],
                     ['check', '20 Job Listings'],
                     ['check', '3 Interview Prep Sessions'],
