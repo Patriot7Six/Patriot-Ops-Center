@@ -3,7 +3,7 @@ import { defineConfig } from '@trigger.dev/sdk/v3'
 
 export default defineConfig({
   project: 'patriot-ops-center',
-  dirs: ['./trigger/jobs'],
+  dirs: ['./jobs'],
   maxDuration: 300,
   retries: {
     enabledInDev: false,

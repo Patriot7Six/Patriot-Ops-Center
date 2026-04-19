@@ -10,7 +10,8 @@
       "Bash(echo \"BUILD_EXIT=$?\")"
     ],
     "additionalDirectories": [
-      "/tmp"
+      "/tmp",
+      "/workspaces/Patriot-Ops-Center/.next"
     ]
   }
 }
