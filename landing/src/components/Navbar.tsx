@@ -2,8 +2,6 @@
 import { useState } from 'react'
 import Link from 'next/link'
 
-const BETA_URL = process.env.NEXT_PUBLIC_BETA_URL ?? 'https://beta.patriot-ops.com'
-
 const NAV_ITEMS = [
   { href: '/#benefits',      label: 'Benefits Navigator' },
   { href: '/#employment',    label: 'Career Tools'       },
@@ -42,16 +40,12 @@ export function Navbar() {
         </ul>
 
         <div className="hidden md:flex items-center gap-3">
-          <div className="flex items-center gap-2 text-xs text-navy-400">
-            <span className="status-dot" />
-            <span>Beta Live</span>
-          </div>
-          <a
-            href={BETA_URL}
+          <Link
+            href="/#waitlist"
             className="bg-gold-500 hover:bg-gold-400 text-navy-900 font-semibold text-sm px-4 py-2 rounded-lg transition-all hover:-translate-y-px no-underline"
           >
-            Enter Beta →
-          </a>
+            Join the Waitlist
+          </Link>
         </div>
 
         <button
@@ -84,13 +78,13 @@ export function Navbar() {
             </Link>
           ))}
           <div className="pt-3 border-t border-navy-800">
-            <a
-              href={BETA_URL}
+            <Link
+              href="/#waitlist"
               onClick={() => setOpen(false)}
               className="block w-full text-center bg-gold-500 hover:bg-gold-400 text-navy-900 font-semibold text-sm px-4 py-3 rounded-lg transition-colors no-underline"
             >
-              Enter Beta →
-            </a>
+              Join the Waitlist
+            </Link>
           </div>
         </div>
       )}

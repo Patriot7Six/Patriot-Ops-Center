@@ -3,8 +3,6 @@ import { Navbar } from '@/components/Navbar'
 import { Footer } from '@/components/Footer'
 import { WaitlistForm } from '@/components/WaitlistForm'
 
-const BETA_URL = process.env.NEXT_PUBLIC_BETA_URL ?? 'https://beta.patriot-ops.com'
-
 export default function HomePage() {
   return (
     <>
@@ -33,7 +31,7 @@ export default function HomePage() {
             <div className="flex items-center justify-center gap-3 mb-7 animate-in delay-1">
               <div className="w-10 h-px bg-gold-600" />
               <span className="text-xs font-bold tracking-[0.18em] uppercase text-gold-500">
-                AI-Powered Veteran Platform · Beta Live
+                AI-Powered Veteran Platform · Launching Soon
               </span>
               <div className="w-10 h-px bg-gold-600" />
             </div>
@@ -49,21 +47,21 @@ export default function HomePage() {
             </p>
 
             <div className="flex flex-wrap items-center justify-center gap-4 mb-10 animate-in delay-4">
-              <a
-                href={BETA_URL}
+              <Link
+                href="#waitlist"
                 className="inline-flex items-center gap-2 bg-gold-500 hover:bg-gold-400 text-navy-900 font-semibold text-base px-8 py-3.5 rounded-lg transition-all hover:-translate-y-px no-underline"
               >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                   <path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.25C17.25 22.15 21 17.25 21 12V7L12 2z" />
                   <polyline points="9 12 11 14 15 10" />
                 </svg>
-                Enter the Beta
-              </a>
+                Join the Waitlist
+              </Link>
               <Link
-                href="#waitlist"
+                href="#benefits"
                 className="inline-flex items-center gap-2 border-2 border-navy-600 hover:border-gold-500 text-navy-100 hover:text-gold-500 font-semibold text-base px-8 py-[13px] rounded-lg transition-all no-underline"
               >
-                Join the Waitlist
+                See What&apos;s Coming
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                   <path d="M5 12h14M12 5l7 7-7 7" />
                 </svg>
@@ -103,12 +101,6 @@ export default function HomePage() {
             <strong className="text-gold-400">Benefits Navigator &amp; Claims Copilot</strong>
             <span className="text-navy-300">—</span>
             <span className="text-navy-300">No account required. No credit card. No strings. Built to serve those who served.</span>
-            <a
-              href={BETA_URL}
-              className="bg-white/5 hover:bg-gold-500/10 border border-navy-700 hover:border-gold-600 text-navy-200 hover:text-gold-400 text-xs font-semibold px-4 py-2 rounded-lg transition-all no-underline"
-            >
-              Try them in beta →
-            </a>
           </div>
         </div>
 
@@ -165,12 +157,12 @@ export default function HomePage() {
                     ))}
                   </ul>
                   <div className="mt-7">
-                    <a
-                      href={`${BETA_URL}/benefits`}
+                    <Link
+                      href="#waitlist"
                       className="flex items-center justify-center w-full border-2 border-navy-600 hover:border-gold-500 text-navy-100 hover:text-gold-500 font-semibold text-sm py-3 rounded-lg transition-all no-underline"
                     >
-                      Open Benefits Navigator →
-                    </a>
+                      Notify Me at Launch →
+                    </Link>
                   </div>
                 </div>
               </div>
@@ -209,12 +201,12 @@ export default function HomePage() {
                     ))}
                   </ul>
                   <div className="mt-7">
-                    <a
-                      href={BETA_URL}
+                    <Link
+                      href="#waitlist"
                       className="flex items-center justify-center w-full bg-gold-500 hover:bg-gold-400 text-navy-900 font-semibold text-sm py-3 rounded-lg transition-all hover:-translate-y-px no-underline"
                     >
-                      Start in Beta — Free →
-                    </a>
+                      Get Early Access →
+                    </Link>
                   </div>
                 </div>
               </div>
@@ -256,12 +248,12 @@ export default function HomePage() {
                   ))}
                 </div>
 
-                <a
-                  href={BETA_URL}
+                <Link
+                  href="#waitlist"
                   className="inline-flex bg-gold-500 hover:bg-gold-400 text-navy-900 font-semibold text-sm px-7 py-3 rounded-lg transition-all hover:-translate-y-px no-underline"
                 >
-                  Open the Timeline in Beta
-                </a>
+                  Join the Waitlist
+                </Link>
               </div>
 
               <div className="corner-brackets bg-navy-800 border border-navy-700 rounded-2xl p-7">
@@ -392,8 +384,7 @@ export default function HomePage() {
                   badge: 'Free Forever', badgeColor: 'emerald',
                   price: '$0', sub: 'No credit card needed',
                   features: ['Full Benefits Navigator', 'Claims Copilot', '1-Year Transition Timeline', '1 AI Resume Generation', '20 Job Listings'],
-                  cta: 'Start Free in Beta',
-                  ctaHref: BETA_URL,
+                  cta: 'Join the Waitlist',
                   ctaStyle: 'outline',
                   featured: false,
                 },
@@ -401,8 +392,7 @@ export default function HomePage() {
                   badge: 'Most Popular', badgeColor: 'gold',
                   price: '$34', sub: 'or $299/year — save 2 months',
                   features: ['Everything in Free', 'Unlimited AI Resume Versions', 'Unlimited Interview Prep', 'Salary Insights + Scripts', 'Unlimited Job Listings', 'Cover Letter Generator'],
-                  cta: 'Preview Pro',
-                  ctaHref: `${BETA_URL}/pricing`,
+                  cta: 'Get Early Access',
                   ctaStyle: 'primary',
                   featured: true,
                 },
@@ -410,8 +400,7 @@ export default function HomePage() {
                   badge: 'Elite', badgeColor: 'navy',
                   price: '$124', sub: 'or $999/year — best value',
                   features: ['Everything in Pro', 'Monthly 1-on-1 Coaching', 'Resume + LinkedIn Pro Review', 'Direct Employer Introductions', 'Clearance Marketplace Access', 'AI Career Coach (Persistent)'],
-                  cta: 'Preview Elite',
-                  ctaHref: `${BETA_URL}/pricing`,
+                  cta: 'Get Early Access',
                   ctaStyle: 'outline',
                   featured: false,
                 },
@@ -452,8 +441,8 @@ export default function HomePage() {
                       </li>
                     ))}
                   </ul>
-                  <a
-                    href={tier.ctaHref}
+                  <Link
+                    href="#waitlist"
                     className={
                       tier.ctaStyle === 'primary'
                         ? 'flex items-center justify-center w-full bg-gold-500 hover:bg-gold-400 text-navy-900 font-semibold text-sm py-3 rounded-lg transition-all hover:-translate-y-px no-underline'
@@ -461,7 +450,7 @@ export default function HomePage() {
                     }
                   >
                     {tier.cta}
-                  </a>
+                  </Link>
                 </div>
               ))}
             </div>
@@ -601,24 +590,24 @@ export default function HomePage() {
             <div className="flex flex-col gap-3">
               {[
                 {
-                  q: 'Is the beta really live?',
-                  a: 'Yes. Benefits Navigator, Claims Copilot, MOS Translator, Resume Analyzer, Career Chat, and Document Vault are all functional on beta.patriot-ops.com. We\'re still hardening payment flows and a few edge cases — hence the beta tag.',
+                  q: 'When will Patriot Ops Center launch?',
+                  a: 'We\'re actively building. Core features — Benefits Navigator, Claims Copilot, MOS Translator, Resume Analyzer, Career Chat, and Document Vault — are all in development. Join the waitlist and we\'ll email you the moment early access opens.',
                 },
                 {
                   q: 'Will Benefits Navigator stay free forever?',
-                  a: 'Yes. Benefits Navigator, Claims Copilot, and the 1-year transition timeline are permanently free for every veteran. No account required to use the free tools.',
+                  a: 'Yes. Benefits Navigator, Claims Copilot, and the 1-year transition timeline will be permanently free for every veteran. No account required for the free tools.',
                 },
                 {
                   q: 'Is my DD214 secure?',
-                  a: 'Documents are stored encrypted at rest in a veteran-owned Supabase tenant with row-level security. Only you can access your files. We never sell veteran data — that is a hard line.',
+                  a: 'When launched, documents will be stored encrypted at rest in a veteran-owned Supabase tenant with row-level security. Only you can access your files. We never sell veteran data — that is a hard line.',
                 },
                 {
                   q: 'What happens when I join the waitlist?',
-                  a: 'You get a confirmation email with early-access details for features still in development. Already-launched features (the beta) are available right now — you don\'t need to wait.',
+                  a: 'You get a confirmation email. We\'ll notify you as we hit launch milestones — private early access first, then public launch. No spam, just launch updates.',
                 },
                 {
                   q: 'Do you work with VSOs, law firms, or TAP programs?',
-                  a: 'Yes. We offer white-labeled tenants with admin dashboards, bulk licensing, and DoD integration paths for TAP. Join the waitlist and note your org in a follow-up email, or use the demo request link above.',
+                  a: 'Yes — organizational partnerships are in our launch plan. We\'ll offer white-labeled tenants with admin dashboards, bulk licensing, and a DoD integration path for TAP. Join the waitlist and reply to the confirmation email with your org details to get on the partner list.',
                 },
               ].map((item, i) => (
                 <details
@@ -664,19 +653,10 @@ export default function HomePage() {
               <em className="not-italic text-gold-500">Let's make sure you get them.</em>
             </h2>
             <p className="text-navy-300 leading-relaxed mb-10 max-w-lg mx-auto">
-              Join the waitlist for early-access invites, launch milestones, and new-feature announcements. Free beta tools are available right now at{' '}
-              <a href={BETA_URL} className="text-gold-400 hover:text-gold-300 underline underline-offset-2">beta.patriot-ops.com</a>.
+              Join the waitlist for early-access invites, launch milestones, and new-feature announcements. No spam — just updates from the front lines of development.
             </p>
-            <div className="flex justify-center mb-6">
+            <div className="flex justify-center">
               <WaitlistForm />
-            </div>
-            <div className="flex items-center justify-center gap-4 flex-wrap mt-8">
-              <a
-                href={BETA_URL}
-                className="inline-flex border-2 border-navy-600 hover:border-gold-500 text-navy-100 hover:text-gold-500 font-semibold text-sm px-7 py-3 rounded-lg transition-all no-underline"
-              >
-                Or skip the line — enter beta →
-              </a>
             </div>
           </div>
         </section>
