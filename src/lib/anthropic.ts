@@ -10,7 +10,7 @@ export function getAnthropic(): Anthropic {
   return _anthropic
 }
 
-export const MODEL = 'claude-sonnet-4-20250514'
+export const MODEL = 'claude-sonnet-4-6'
 
 /**
  * Creates a ReadableStream that pipes Claude's streaming text response
