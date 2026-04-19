@@ -1,0 +1,160 @@
+@import "tailwindcss";
+
+@theme {
+  --color-navy-950: #0a1929;
+  --color-navy-900: #102a43;
+  --color-navy-800: #243b53;
+  --color-navy-700: #334e68;
+  --color-navy-600: #486581;
+  --color-navy-500: #627d98;
+  --color-navy-400: #829ab1;
+  --color-navy-300: #9fb3c8;
+  --color-navy-200: #bcccdc;
+  --color-navy-100: #d9e2ec;
+  --color-navy-50:  #f0f4f8;
+  --color-gold-600: #d97706;
+  --color-gold-500: #f59e0b;
+  --color-gold-400: #fbbf24;
+  --color-gold-300: #fcd34d;
+  --color-gold-200: #fde68a;
+  --color-gold-100: #fef3c7;
+
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+
+html {
+  background-color: var(--color-navy-950);
+  color: var(--color-navy-50);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+}
+
+* { box-sizing: border-box; }
+
+::selection {
+  background-color: var(--color-gold-500);
+  color: var(--color-navy-950);
+}
+
+/* ── Grid background pattern ─────────────────────────────────────────────── */
+.grid-pattern {
+  background-image:
+    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+/* ── Corner brackets decoration ──────────────────────────────────────────── */
+.corner-brackets { position: relative; }
+.corner-brackets::before,
+.corner-brackets::after {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border-color: var(--color-gold-500);
+}
+.corner-brackets::before {
+  top: -2px; left: -2px;
+  border-top: 2px solid;
+  border-left: 2px solid;
+}
+.corner-brackets::after {
+  bottom: -2px; right: -2px;
+  border-bottom: 2px solid;
+  border-right: 2px solid;
+}
+
+/* ── Scanning line animation ─────────────────────────────────────────────── */
+.scanning-line { position: relative; overflow: hidden; }
+.scanning-line::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--color-gold-500), transparent);
+  animation: scan 3s ease-in-out infinite;
+}
+@keyframes scan {
+  0%   { transform: translateY(0);    opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 1; }
+  100% { transform: translateY(500px); opacity: 0; }
+}
+
+/* ── Glass dark panel ────────────────────────────────────────────────────── */
+.glass-dark {
+  background: rgba(16, 42, 67, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+/* ── Military stripe — gold left border accent ───────────────────────────── */
+.military-stripe {
+  position: relative;
+  padding-left: 1.25rem;
+}
+.military-stripe::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+  background: linear-gradient(to bottom, var(--color-gold-500), var(--color-navy-500));
+}
+
+/* ── Text gradient (navy → gold) ─────────────────────────────────────────── */
+.text-gradient {
+  background: linear-gradient(90deg, var(--color-navy-400), var(--color-gold-500));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── Gold glow pulse on text ─────────────────────────────────────────────── */
+.glow-gold {
+  animation: glow-pulse 3s ease-in-out infinite;
+}
+@keyframes glow-pulse {
+  0%, 100% {
+    text-shadow:
+      0 0 2px  rgba(251,191,36,1),
+      0 0 8px  rgba(251,191,36,0.9),
+      0 0 16px rgba(251,191,36,0.4);
+  }
+  50% {
+    text-shadow:
+      0 0 4px  rgba(251,191,36,1),
+      0 0 12px rgba(251,191,36,0.95),
+      0 0 24px rgba(251,191,36,0.5);
+  }
+}
+
+/* ── Pulsing status dot ──────────────────────────────────────────────────── */
+.status-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: #34d399;
+  box-shadow: 0 0 6px rgba(52,211,153,0.6);
+  animation: pulse-dot 2s ease-in-out infinite;
+  display: inline-block;
+  flex-shrink: 0;
+}
+@keyframes pulse-dot {
+  0%, 100% { box-shadow: 0 0 6px  rgba(52,211,153,0.6); }
+  50%       { box-shadow: 0 0 12px rgba(52,211,153,0.9); }
+}
+
+/* ── Entrance animations ─────────────────────────────────────────────────── */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-in { animation: fadeInUp 0.6s ease-out forwards; }
+.delay-1 { animation-delay: 0.1s; opacity: 0; }
+.delay-2 { animation-delay: 0.2s; opacity: 0; }
+.delay-3 { animation-delay: 0.3s; opacity: 0; }
+.delay-4 { animation-delay: 0.4s; opacity: 0; }

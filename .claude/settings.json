@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 -c \"import json,sys; [print\\(f['type'], f['name']\\) for f in json.load\\(sys.stdin\\)]\")",
+      "Read(//tmp/**)",
+      "Bash(echo \"EXIT=$?\")",
+      "Bash(./node_modules/.bin/tsc --noEmit)",
+      "Bash(echo \"TYPECHECK_EXIT=$?\")",
+      "Bash(./node_modules/.bin/next build *)",
+      "Bash(echo \"BUILD_EXIT=$?\")"
+    ],
+    "additionalDirectories": [
+      "/tmp"
+    ]
+  }
+}
