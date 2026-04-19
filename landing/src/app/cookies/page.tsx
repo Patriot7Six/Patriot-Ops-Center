@@ -130,7 +130,7 @@ export default function CookiesPage() {
         <ul className="list-disc pl-6 space-y-2 mt-4">
           <li><strong className="text-white">Vercel (Hosting &amp; Analytics):</strong> <a href="https://vercel.com/legal/privacy-policy" className="text-gold-500 hover:text-gold-400" target="_blank" rel="noopener noreferrer">Privacy Policy</a></li>
           <li><strong className="text-white">Resend (Email delivery):</strong> <a href="https://resend.com/legal/privacy-policy" className="text-gold-500 hover:text-gold-400" target="_blank" rel="noopener noreferrer">Privacy Policy</a></li>
-          <li><strong className="text-white">Stripe (Payments — beta):</strong> <a href="https://stripe.com/privacy" className="text-gold-500 hover:text-gold-400" target="_blank" rel="noopener noreferrer">Privacy Policy</a></li>
+          <li><strong className="text-white">Stripe (Payments):</strong> <a href="https://stripe.com/privacy" className="text-gold-500 hover:text-gold-400" target="_blank" rel="noopener noreferrer">Privacy Policy</a></li>
           <li><strong className="text-white">Google Analytics (if enabled):</strong> <a href="https://policies.google.com/privacy" className="text-gold-500 hover:text-gold-400" target="_blank" rel="noopener noreferrer">Privacy Policy</a></li>
         </ul>
       </section>

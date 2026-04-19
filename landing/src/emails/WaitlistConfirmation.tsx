@@ -15,18 +15,16 @@ import {
 interface WaitlistConfirmationProps {
   email?: string
   siteUrl?: string
-  betaUrl?: string
 }
 
 export default function WaitlistConfirmation({
   email,
   siteUrl = 'https://patriot-ops.com',
-  betaUrl = 'https://beta.patriot-ops.com',
 }: WaitlistConfirmationProps) {
   return (
     <Html>
       <Head />
-      <Preview>You're on the list — the beta is live at beta.patriot-ops.com</Preview>
+      <Preview>You&apos;re on the list — we&apos;ll email you the moment early access opens</Preview>
       <Body style={main}>
         <Container style={container}>
 
@@ -45,39 +43,36 @@ export default function WaitlistConfirmation({
 
             <Text style={paragraph}>
               Thank you for joining the Patriot Ops Center waitlist. We&apos;re building an AI-powered
-              veteran platform covering VA benefits, claims support, and civilian career transition.
+              veteran platform covering VA benefits, claims support, and civilian career transition —
+              and you&apos;re now on the list to hear first when we launch.
             </Text>
 
             <Text style={paragraphBold}>
-              Good news — the beta is already live.
+              Here&apos;s what you can expect from us.
             </Text>
 
             <Text style={paragraph}>
-              You don&apos;t have to wait to access the free tools. Benefits Navigator, Claims Copilot,
-              MOS Translator, and Resume Analyzer are available right now:
+              We&apos;ll email you as we hit real milestones — private early access, public launch, and
+              new capabilities shipped. No spam, no filler, just updates from the front lines of
+              development.
             </Text>
 
-            <Section style={ctaSection}>
-              <Link href={betaUrl} style={ctaButton}>
-                Enter the Beta →
-              </Link>
-            </Section>
-
-            <Hr style={innerDivider} />
-
             <Text style={paragraph}>
-              We&apos;ll email you as we ship new capabilities:
+              What&apos;s coming:
             </Text>
 
             <Section style={featureList}>
               <Text style={featureItem}>
+                <span style={bullet}>★</span> Benefits Navigator &amp; Claims Copilot — always free
+              </Text>
+              <Text style={featureItem}>
                 <span style={bullet}>★</span> 365-day interactive transition timeline
               </Text>
               <Text style={featureItem}>
-                <span style={bullet}>★</span> AI Interview Prep Coach (STAR method)
+                <span style={bullet}>★</span> DD214 parsing, MOS Translator, AI Resume Generator
               </Text>
               <Text style={featureItem}>
-                <span style={bullet}>★</span> Salary Intelligence for MOS-to-civilian role transitions
+                <span style={bullet}>★</span> Interview Prep Coach (STAR method) &amp; Salary Intelligence
               </Text>
               <Text style={featureItem}>
                 <span style={bullet}>★</span> Clearance Marketplace (TS/SCI and Secret-cleared roles)
@@ -113,8 +108,6 @@ export default function WaitlistConfirmation({
 
             <Text style={footerLinks}>
               <Link href={siteUrl} style={link}>Website</Link>
-              {' · '}
-              <Link href={betaUrl} style={link}>Beta</Link>
               {' · '}
               <Link href={`${siteUrl}/privacy`} style={link}>Privacy Policy</Link>
             </Text>
@@ -199,27 +192,6 @@ const paragraphBold = {
   color: gold400,
   fontWeight: '600',
   marginTop: '20px',
-}
-
-const ctaSection = {
-  textAlign: 'center' as const,
-  margin: '24px 0',
-}
-
-const ctaButton = {
-  backgroundColor: gold500,
-  color: navy900,
-  padding: '12px 28px',
-  borderRadius: '8px',
-  fontSize: '15px',
-  fontWeight: '600',
-  textDecoration: 'none',
-  display: 'inline-block',
-}
-
-const innerDivider = {
-  borderColor: navy800,
-  margin: '24px 0',
 }
 
 const featureList = {

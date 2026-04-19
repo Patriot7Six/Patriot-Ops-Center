@@ -1,6 +1,6 @@
 # Patriot Ops Center — Landing Page
 
-The marketing landing page served at [patriot-ops.com](https://patriot-ops.com). Drives traffic to the full beta app at [beta.patriot-ops.com](https://beta.patriot-ops.com) and collects waitlist signups via Resend.
+The marketing / pre-launch landing page served at [patriot-ops.com](https://patriot-ops.com). Collects waitlist signups via Resend while the main app is in active development. CTAs all point at the on-page waitlist form — no live app links yet.
 
 ## Stack
 
@@ -28,7 +28,7 @@ landing/
 │   │       ├── unsubscribe/route.ts  # GET — unsubscribe from audience
 │   │       └── health/route.ts       # GET — uptime check
 │   ├── components/
-│   │   ├── Navbar.tsx            # sticky nav, "Enter Beta" CTA
+│   │   ├── Navbar.tsx            # sticky nav, "Join the Waitlist" CTA
 │   │   ├── Footer.tsx            # site footer with platform/org/company columns
 │   │   ├── WaitlistForm.tsx      # client component, submits to /api/waitlist
 │   │   └── LegalShell.tsx        # shared wrapper for privacy/terms/cookies pages
@@ -57,7 +57,6 @@ npm run dev                     # http://localhost:3001
 | `RESEND_API_KEY`        | Resend API key for waitlist + email                |
 | `RESEND_AUDIENCE_ID`    | Resend audience ID where signups are added         |
 | `NEXT_PUBLIC_SITE_URL`  | Public URL of this landing (default patriot-ops.com) |
-| `NEXT_PUBLIC_BETA_URL`  | Where CTAs link (default beta.patriot-ops.com)     |
 
 ## Deploying to Vercel — step by step
 
@@ -82,7 +81,6 @@ In the same **New Project** screen, expand **Environment Variables** and add:
 | `RESEND_API_KEY`         | *(copy from old PoC-Landing-Page project → Settings → Environment Variables)* |
 | `RESEND_AUDIENCE_ID`     | *(copy from old PoC-Landing-Page project)* |
 | `NEXT_PUBLIC_SITE_URL`   | `https://patriot-ops.com`            |
-| `NEXT_PUBLIC_BETA_URL`   | `https://beta.patriot-ops.com`       |
 
 ### 3. Deploy
 
@@ -94,7 +92,7 @@ Before cutting over the real domain, verify:
 
 - [ ] Home page loads, theme looks right (navy bg, gold accents, Inter font)
 - [ ] Hero, Two Wings, Timeline, How It Works, Pricing, Orgs, Founder, FAQ, Waitlist sections all render
-- [ ] "Enter Beta" CTAs go to `https://beta.patriot-ops.com`
+- [ ] All CTAs scroll/link to the `#waitlist` section
 - [ ] `/privacy`, `/terms`, `/cookies` all load
 - [ ] Waitlist form — submit a test email → success message
 - [ ] Confirmation email arrives (check spam) with correct styling, logo, unsubscribe link

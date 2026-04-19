@@ -1,7 +1,5 @@
 import Link from 'next/link'
 
-const BETA_URL = process.env.NEXT_PUBLIC_BETA_URL ?? 'https://beta.patriot-ops.com'
-
 export function Footer() {
   const year = new Date().getFullYear()
 
@@ -74,9 +72,9 @@ export function Footer() {
             <h4 className="text-xs font-bold tracking-widest uppercase text-navy-400 mb-4">Company</h4>
             <ul className="space-y-2 list-none">
               <li>
-                <a href={BETA_URL} className="text-sm text-navy-300 hover:text-gold-400 transition-colors no-underline">
-                  Enter Beta
-                </a>
+                <Link href="/#waitlist" className="text-sm text-navy-300 hover:text-gold-400 transition-colors no-underline">
+                  Join the Waitlist
+                </Link>
               </li>
               <li>
                 <Link href="/#founder" className="text-sm text-navy-300 hover:text-gold-400 transition-colors no-underline">

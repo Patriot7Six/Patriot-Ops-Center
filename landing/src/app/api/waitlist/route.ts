@@ -5,7 +5,6 @@ import WaitlistConfirmation from '@/emails/WaitlistConfirmation'
 export const runtime = 'nodejs'
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://patriot-ops.com'
-const BETA_URL = process.env.NEXT_PUBLIC_BETA_URL ?? 'https://beta.patriot-ops.com'
 const FROM_ADDRESS = 'Bradley Baker at Patriot Ops Center <noreply@email.patriot-ops.com>'
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -53,8 +52,8 @@ export async function POST(req: Request) {
   const sendRes = await resend.emails.send({
     from: FROM_ADDRESS,
     to: email,
-    subject: "You're on the list — the Patriot Ops Center beta is live",
-    react: WaitlistConfirmation({ email, siteUrl: SITE_URL, betaUrl: BETA_URL }),
+    subject: "You're on the list — welcome to the Patriot Ops Center waitlist",
+    react: WaitlistConfirmation({ email, siteUrl: SITE_URL }),
   })
 
   if (sendRes.error) {
