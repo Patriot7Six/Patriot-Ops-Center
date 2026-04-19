@@ -9,8 +9,8 @@
     "type-check": "tsc --noEmit",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "trigger:dev": "npx trigger.dev@4.4.0 dev",
-    "trigger:deploy": "npx trigger.dev@4.4.0 deploy"
+    "trigger:dev": "npx trigger.dev@4.4.0 dev --config trigger/config.ts",
+    "trigger:deploy": "npx trigger.dev@4.4.0 deploy --config trigger/config.ts"
   },
   "dependencies": {
     "@amplitude/analytics-browser": "^2.40.0",
