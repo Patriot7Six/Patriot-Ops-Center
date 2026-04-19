@@ -1,6 +1,16 @@
 import type { NextConfig } from 'next'
+import path from 'node:path'
+
+// Pin Next.js / Turbopack to THIS directory so it can't discover
+// parent-repo files (sentry configs, src/instrumentation.ts, etc.)
+// when Vercel exposes them during the build.
+const ROOT = path.resolve('.')
 
 const nextConfig: NextConfig = {
+  turbopack: {
+    root: ROOT,
+  },
+  outputFileTracingRoot: ROOT,
   async headers() {
     return [
       {
