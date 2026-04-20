@@ -34,8 +34,8 @@ export async function POST(request: NextRequest) {
         // Determine tier from price ID
         let tier: SubscriptionTier = 'free'
         const priceId = sub.items.data[0]?.price.id
-        if (priceId === process.env.STRIPE_ELITE_PRICE_ID) tier = 'elite'
-        else if (priceId === process.env.STRIPE_PRO_PRICE_ID) tier = 'pro'
+        if (priceId === process.env.STRIPE_PRICE_ELITE_MONTHLY) tier = 'elite'
+        else if (priceId === process.env.STRIPE_PRICE_PRO_MONTHLY) tier = 'pro'
 
         const status = sub.status as SubscriptionStatus
 

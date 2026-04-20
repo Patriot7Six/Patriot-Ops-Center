@@ -53,7 +53,7 @@ export const PLANS: Plan[] = [
     tier: 'pro',
     name: 'Ranger',
     price: 34,
-    priceId: process.env.STRIPE_PRO_PRICE_ID!,
+    priceId: process.env.STRIPE_PRICE_PRO_MONTHLY!,
     description: 'Everything you need to maximize your benefits.',
     badge: 'Most Popular',
     features: [
@@ -71,7 +71,7 @@ export const PLANS: Plan[] = [
     tier: 'elite',
     name: 'Special Ops',
     price: 124,
-    priceId: process.env.STRIPE_ELITE_PRICE_ID!,
+    priceId: process.env.STRIPE_PRICE_ELITE_MONTHLY!,
     description: 'White-glove service for complex situations.',
     features: [
       { text: 'Everything in Ranger',              included: true  },
