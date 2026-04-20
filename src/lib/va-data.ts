@@ -1,12 +1,23 @@
 // Structured VA knowledge chunks — seeded into va_knowledge via the sync job.
-// Each chunk has a stable `source` ID used for upsert (no duplicates on re-sync).
-// Update these chunks when VA publishes new rates/policies, then re-run the sync job.
 //
-// Official source for rate verification: https://www.va.gov/disability/compensation-rates/
-// 2025 rates reflect 2.5% COLA effective December 1, 2024.
+// ┌─────────────────────────────────────────────────────────────────┐
+// │  ANNUAL UPDATE CHECKLIST (every December when VA announces COLA) │
+// │  1. Update RATE_YEAR to the new benefit year                     │
+// │  2. Update COLA_EFFECTIVE to the new effective date              │
+// │  3. Update COLA_PCT to the new COLA percentage                   │
+// │  4. Update all dollar amounts in the chunks below                │
+// │  5. Re-run the sync job: Trigger.dev → sync-va-knowledge → Test  │
+// │                                                                   │
+// │  Official rate source: https://www.va.gov/disability/            │
+// │                        compensation-rates/                        │
+// └─────────────────────────────────────────────────────────────────┘
+
+const RATE_YEAR      = '2025'
+const COLA_EFFECTIVE = 'December 1, 2024'
+const COLA_PCT       = '2.5%'
 
 export interface KnowledgeChunk {
-  source: string    // stable upsert key
+  source: string    // stable upsert key — never include a year here
   category: 'compensation' | 'claims' | 'healthcare' | 'education' | 'housing' | 'career'
   content: string
 }
@@ -15,10 +26,10 @@ export const VA_KNOWLEDGE_CHUNKS: KnowledgeChunk[] = [
   // ── Compensation Rates ──────────────────────────────────────────────────────
 
   {
-    source: 'va-comp-rates-2025-no-deps',
+    source: 'va-comp-rates-no-deps',
     category: 'compensation',
-    content: `VA Disability Compensation Rates 2025 — Veteran with No Dependents
-Effective: December 1, 2024 (2.5% COLA increase)
+    content: `VA Disability Compensation Rates ${RATE_YEAR} — Veteran with No Dependents
+Effective: ${COLA_EFFECTIVE} (${COLA_PCT} COLA increase)
 Official source: https://www.va.gov/disability/compensation-rates/veteran-with-disability-rating/
 
 Rating | Monthly Payment
@@ -37,10 +48,10 @@ These are tax-free federal benefit payments. Veterans rated 100% P&T may also qu
   },
 
   {
-    source: 'va-comp-rates-2025-with-spouse',
+    source: 'va-comp-rates-with-spouse',
     category: 'compensation',
-    content: `VA Disability Compensation Rates 2025 — Veteran with Spouse (No Children)
-Effective: December 1, 2024 (2.5% COLA increase)
+    content: `VA Disability Compensation Rates ${RATE_YEAR} — Veteran with Spouse (No Children)
+Effective: ${COLA_EFFECTIVE} (${COLA_PCT} COLA increase)
 These rates apply at 30% and above — the VA does not add dependent amounts at 10% or 20%.
 Official source: https://www.va.gov/disability/compensation-rates/veteran-with-disability-rating/
 
@@ -58,10 +69,10 @@ To receive the dependent rate, the veteran must add dependents to their VA recor
   },
 
   {
-    source: 'va-comp-rates-2025-with-spouse-child',
+    source: 'va-comp-rates-with-spouse-child',
     category: 'compensation',
-    content: `VA Disability Compensation Rates 2025 — Veteran with Spouse and One Child
-Effective: December 1, 2024 (2.5% COLA increase)
+    content: `VA Disability Compensation Rates ${RATE_YEAR} — Veteran with Spouse and One Child
+Effective: ${COLA_EFFECTIVE} (${COLA_PCT} COLA increase)
 Official source: https://www.va.gov/disability/compensation-rates/veteran-with-disability-rating/
 
 Rating | Monthly Payment (spouse + 1 child)
@@ -79,16 +90,16 @@ Submit VA Form 21-686c to add dependents; VA Form 21-674 for school-age children
   },
 
   {
-    source: 'va-tdiu-2025',
+    source: 'va-tdiu',
     category: 'compensation',
-    content: `TDIU — Total Disability based on Individual Unemployability (2025)
+    content: `TDIU — Total Disability based on Individual Unemployability (${RATE_YEAR})
 TDIU allows veterans rated less than 100% to receive 100% disability pay if their service-connected condition(s) prevent substantially gainful employment.
 
 Eligibility requirements:
 • Single condition: rated at least 60%
 • Multiple conditions: one rated at least 40% AND combined rating at least 70%
 
-2025 TDIU payment rate (same as 100% schedular): $3,831.30/month (no dependents)
+${RATE_YEAR} TDIU payment rate (same as 100% schedular): $3,831.30/month (no dependents)
 With spouse: $4,037.53/month
 
 How to apply: VA Form 21-8940 (Veteran's Application for Increased Compensation Based on Unemployability)
@@ -99,12 +110,12 @@ Marginal employment (under federal poverty threshold) does not disqualify a vete
   },
 
   {
-    source: 'va-smc-2025',
+    source: 'va-smc',
     category: 'compensation',
-    content: `SMC — Special Monthly Compensation (2025)
+    content: `SMC — Special Monthly Compensation (${RATE_YEAR})
 SMC provides additional payments above the standard disability rate for veterans with severe disabilities, loss of limb, or need for regular aid and attendance.
 
-Key SMC levels (monthly amounts, 2025):
+Key SMC levels (monthly amounts, ${RATE_YEAR}):
 • SMC-S (housebound): $3,831.30 base + $370.04 = ~$4,201.34/month
 • SMC-L (aid and attendance, one limb loss): ~$4,289.16/month
 • SMC-K (minor loss, e.g., creative organ): +$122.53 added to existing rating
@@ -117,12 +128,12 @@ SMC is often underutilized — veterans with severe conditions should specifical
   },
 
   {
-    source: 'va-dic-2025',
+    source: 'va-dic',
     category: 'compensation',
-    content: `DIC — Dependency and Indemnity Compensation (2025)
+    content: `DIC — Dependency and Indemnity Compensation (${RATE_YEAR})
 DIC is a tax-free monthly benefit paid to eligible survivors (surviving spouse, children, parents) of veterans who died in service or from a service-connected condition.
 
-2025 Basic DIC rate for surviving spouse: $1,612.75/month
+${RATE_YEAR} Basic DIC rate for surviving spouse: $1,612.75/month
 Additional amounts:
 • Transitional benefit (first 2 years): +$342.46/month
 • Each dependent child under 18: +$342.46/month
@@ -165,9 +176,9 @@ Use the VA's combined ratings calculator: https://www.va.gov/disability/about-di
   },
 
   {
-    source: 'va-appeal-lanes-2025',
+    source: 'va-appeal-lanes',
     category: 'claims',
-    content: `VA Appeals — Three Decision Review Options (AMA Framework, 2025)
+    content: `VA Appeals — Three Decision Review Options (AMA Framework, ${RATE_YEAR})
 After a denied or unfavorable rating decision, veterans have three appeal lanes. The deadline for all three is generally 1 year from the decision date.
 
 1. Supplemental Claim (best for new evidence)
@@ -219,9 +230,9 @@ Nexus letter: A private doctor's letter stating "at least as likely as not" (50%
   },
 
   {
-    source: 'va-key-forms-2025',
+    source: 'va-key-forms',
     category: 'claims',
-    content: `Key VA Forms for Disability Claims (2025)
+    content: `Key VA Forms for Disability Claims (${RATE_YEAR})
 Filing forms:
 • VA Form 21-526EZ — Initial Application for Disability Compensation (most common)
 • VA Form 20-0995 — Supplemental Claim Decision Review Request
@@ -247,7 +258,7 @@ File all forms at: https://www.va.gov/decision-reviews/ or through a VSO (free).
   },
 
   {
-    source: 'va-pact-act-2025',
+    source: 'va-pact-act',
     category: 'claims',
     content: `PACT Act — Sergeant First Class Heath Robinson Honoring our Promise to Address Comprehensive Toxics Act (2022)
 The PACT Act is the largest expansion of VA benefits in decades, effective August 2022.
@@ -277,9 +288,9 @@ More: https://www.va.gov/resources/the-pact-act-and-your-va-benefits/`,
   // ── Healthcare ────────────────────────────────────────────────────────────
 
   {
-    source: 'va-healthcare-eligibility-2025',
+    source: 'va-healthcare-eligibility',
     category: 'healthcare',
-    content: `VA Healthcare Eligibility (2025)
+    content: `VA Healthcare Eligibility (${RATE_YEAR})
 Most veterans who served on active duty and were separated under conditions other than dishonorable are eligible.
 
 Priority groups (1 = highest priority, 8 = lowest):
@@ -303,16 +314,16 @@ How to enroll: VA Form 10-10EZ at https://www.va.gov/health-care/apply-for-healt
   // ── Education ─────────────────────────────────────────────────────────────
 
   {
-    source: 'va-post911-gibill-2025',
+    source: 'va-post911-gibill',
     category: 'education',
-    content: `Post-9/11 GI Bill (Chapter 33) — 2025
+    content: `Post-9/11 GI Bill (Chapter 33) — ${RATE_YEAR}
 The most generous education benefit for veterans who served on active duty after September 10, 2001.
 
 Eligibility: 90+ days of active duty after 9/10/2001 (or discharged for service-connected disability after 30 days)
 
 Benefits (at 100% eligibility = 36 months of aggregate active duty):
 • Tuition & fees: 100% of in-state public school tuition (or up to $28,937.09/year for private/foreign schools in 2024-25 academic year)
-• Housing allowance: Equal to E-5 with dependents BAH for school's zip code (online-only = ~$1,053/month in 2025)
+• Housing allowance: Equal to E-5 with dependents BAH for school's zip code (online-only = ~$1,053/month in ${RATE_YEAR})
 • Book stipend: Up to $1,000/year
 • One-time relocation: $500 (if moving from rural area)
 
@@ -332,16 +343,16 @@ Apply: VA Form 22-1990 at https://www.va.gov/education/apply-for-education-benef
   // ── Housing ───────────────────────────────────────────────────────────────
 
   {
-    source: 'va-home-loan-2025',
+    source: 'va-home-loan',
     category: 'housing',
-    content: `VA Home Loan Benefit (2025)
+    content: `VA Home Loan Benefit (${RATE_YEAR})
 VA-backed loans require no down payment and no private mortgage insurance (PMI), making them the best mortgage product available for most veterans.
 
 Eligibility: Active duty, veterans, National Guard/Reserve (6+ years or mobilized 90+ days), surviving spouses
 
-2025 VA loan limits: No loan limit for veterans with full entitlement (no existing VA loan). For those with reduced entitlement, conforming loan limit applies ($766,550 in most areas, higher in high-cost areas).
+${RATE_YEAR} VA loan limits: No loan limit for veterans with full entitlement (no existing VA loan). For those with reduced entitlement, conforming loan limit applies ($766,550 in most areas, higher in high-cost areas).
 
-VA funding fee (2025) — one-time fee, can be financed:
+VA funding fee (${RATE_YEAR}) — one-time fee, can be financed:
 • First use, no down payment: 2.15% (Regular Military), 2.15% (Reserves/Guard)
 • First use, 5-9.99% down: 1.5%
 • First use, 10%+ down: 1.25%
@@ -358,9 +369,9 @@ Restoration of entitlement: After selling VA-financed home and paying off the lo
   // ── Career ────────────────────────────────────────────────────────────────
 
   {
-    source: 'va-vre-voc-rehab-2025',
+    source: 'va-vre-voc-rehab',
     category: 'career',
-    content: `VR&E — Vocational Rehabilitation & Employment (Chapter 31, 2025)
+    content: `VR&E — Vocational Rehabilitation & Employment (Chapter 31, ${RATE_YEAR})
 VR&E helps veterans with service-connected disabilities prepare for, find, and maintain suitable employment.
 
 Eligibility:
@@ -370,7 +381,7 @@ Eligibility:
 
 Benefits:
 • Education/training: Full tuition + fees (no cap), books, supplies
-• Monthly subsistence allowance while in training (2025 rates similar to GI Bill housing rates)
+• Monthly subsistence allowance while in training (${RATE_YEAR} rates similar to GI Bill housing rates)
 • Job placement assistance
 • Independent living services (for 100% P&T unable to work)
 • Business ownership track available
