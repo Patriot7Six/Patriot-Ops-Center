@@ -1,9 +1,9 @@
 // trigger/config.ts
-import { defineConfig } from '@trigger.dev/sdk/v3'
+import { defineConfig } from "@trigger.dev/sdk/v3";
 
 export default defineConfig({
-  project: 'patriot-ops-center',
-  dirs: ['./jobs'],
+  project: "tr_prod_QsXNz21k731cXODgOHhp", // e.g. proj_abc123xyz — found in Trigger.dev → Settings
+  dirs: ["./jobs"],
   maxDuration: 300,
   retries: {
     enabledInDev: false,
@@ -15,4 +15,4 @@ export default defineConfig({
       randomize: true,
     },
   },
-})
+});
