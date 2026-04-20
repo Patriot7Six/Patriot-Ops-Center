@@ -2,6 +2,7 @@
 import { getAnthropic, MODEL, SYSTEM_BASE, streamText } from '@/lib/anthropic'
 import { createClient } from '@/lib/supabase/server'
 import { checkRateLimit, rateLimitHeaders } from '@/lib/ratelimit'
+import { getRAGContext } from '@/lib/rag'
 import type { SubscriptionTier } from '@/types/database'
 
 export const runtime = 'edge'
@@ -56,10 +57,18 @@ export async function POST(req: Request) {
 
     const { messages } = await req.json()
 
+    // Retrieve relevant VA knowledge chunks based on the user's latest message
+    const lastUserMessage = [...messages].reverse().find((m: { role: string }) => m.role === 'user')
+    const ragContext = lastUserMessage
+      ? await getRAGContext(supabase, lastUserMessage.content ?? '', { limit: 5 })
+      : ''
+
+    const systemWithRAG = ragContext ? `${SYSTEM}\n\n${ragContext}` : SYSTEM
+
     const stream = await getAnthropic().messages.stream({
       model: MODEL,
       max_tokens: 1500,
-      system: SYSTEM,
+      system: systemWithRAG,
       messages,
     })
 
