@@ -2,7 +2,7 @@
 import { defineConfig } from "@trigger.dev/sdk/v3";
 
 export default defineConfig({
-  project: "tr_prod_QsXNz21k731cXODgOHhp", // e.g. proj_abc123xyz — found in Trigger.dev → Settings
+  project: "proj_iyitwcnabiphbpfnvevg", // e.g. proj_abc123xyz — found in Trigger.dev → Settings
   dirs: ["./jobs"],
   maxDuration: 300,
   retries: {
