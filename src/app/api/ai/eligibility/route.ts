@@ -5,7 +5,6 @@ import { checkRateLimit, rateLimitHeaders } from '@/lib/ratelimit'
 import { getRAGContext } from '@/lib/rag'
 import type { SubscriptionTier } from '@/types/database'
 
-export const runtime = 'edge'
 
 const SYSTEM = `${SYSTEM_BASE}
 
