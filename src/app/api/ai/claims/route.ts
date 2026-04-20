@@ -5,8 +5,6 @@ import { checkRateLimit, rateLimitHeaders } from '@/lib/ratelimit'
 import { getRAGContext } from '@/lib/rag'
 import type { SubscriptionTier } from '@/types/database'
 
-export const runtime = 'edge'
-
 const SYSTEM = `${SYSTEM_BASE}
 
 You are currently in the Claims Copilot. Your job is to guide veterans through filing VA disability claims step by step — helping them document conditions correctly and maximize their ratings.

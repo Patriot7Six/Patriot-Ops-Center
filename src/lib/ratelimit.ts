@@ -90,7 +90,7 @@ export async function peekAiRateLimit() {
   const { data: { user } } = await supabase.auth.getUser()
 
   if (!user) {
-    return { success: false, limit: 0, remaining: 0, reset: Date.now() }
+    return { success: false, limit: AI_LIMITS.free, remaining: 0, reset: Date.now() }
   }
 
   const { data: subscription } = await supabase

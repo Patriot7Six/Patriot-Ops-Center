@@ -4,8 +4,6 @@ import { createClient } from '@/lib/supabase/server'
 import { checkRateLimit, rateLimitHeaders } from '@/lib/ratelimit'
 import type { SubscriptionTier } from '@/types/database'
 
-export const runtime = 'edge'
-
 const SYSTEM_MOS = `${SYSTEM_BASE}
 
 You are helping a veteran translate their MOS (Military Occupational Specialty), Rate, or AFSC into civilian career paths.
