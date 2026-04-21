@@ -4,15 +4,16 @@ import Link from 'next/link'
 
 type Usage = { remaining: number; limit: number } | null
 
-export function useFreeUsage() {
+export function useFreeUsage(tool?: 'eligibility' | 'claims') {
   const [usage, setUsage] = useState<Usage>(null)
 
   useEffect(() => {
-    fetch('/api/ai/usage')
+    const url = tool ? `/api/ai/usage?tool=${tool}` : '/api/ai/usage'
+    fetch(url)
       .then(r => (r.ok ? r.json() : null))
       .then(d => d && setUsage({ remaining: d.remaining, limit: d.limit }))
       .catch(() => {})
-  }, [])
+  }, [tool])
 
   function updateFromResponse(res: Response) {
     const limit = Number(res.headers.get('X-RateLimit-Limit'))

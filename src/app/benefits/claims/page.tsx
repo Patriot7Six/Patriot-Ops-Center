@@ -24,7 +24,7 @@ export default function ClaimsPage() {
   const [input, setInput] = useState('')
   const [isStreaming, setIsStreaming] = useState(false)
   const bottomRef = useRef<HTMLDivElement>(null)
-  const { usage, updateFromResponse } = useFreeUsage()
+  const { usage, updateFromResponse } = useFreeUsage('claims')
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })

@@ -26,7 +26,7 @@ export default async function DashboardPage() {
 
   const QUICK_ACTIONS = [
     {
-      href: '/benefits/eligibility',
+      href: '/dashboard/eligibility',
       title: 'VA Eligibility Checker',
       description: 'Instantly check what VA benefits you qualify for based on your service record.',
       cta: 'Check Now',
@@ -36,7 +36,7 @@ export default async function DashboardPage() {
       ),
     },
     {
-      href: '/benefits/claims',
+      href: '/dashboard/claims',
       title: 'Claims Copilot',
       description: 'AI-powered guidance to file stronger VA claims and maximize your disability rating.',
       cta: 'Start Claim',
