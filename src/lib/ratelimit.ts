@@ -23,6 +23,10 @@ export const AI_LIMITS: Record<SubscriptionTier, number> = {
   elite: 500,
 }
 
+export const ANON_AI_LIMIT = 10
+
+export type AnonTool = 'eligibility' | 'claims'
+
 const limiters: Record<SubscriptionTier, Ratelimit> = {
   free: new Ratelimit({
     redis,
@@ -42,6 +46,40 @@ const limiters: Record<SubscriptionTier, Ratelimit> = {
     prefix: 'ratelimit:elite',
     analytics: true,
   }),
+}
+
+const anonLimiters: Record<AnonTool, Ratelimit> = {
+  eligibility: new Ratelimit({
+    redis,
+    limiter: Ratelimit.slidingWindow(ANON_AI_LIMIT, '24 h'),
+    prefix: 'ratelimit:anon:eligibility',
+    analytics: true,
+  }),
+  claims: new Ratelimit({
+    redis,
+    limiter: Ratelimit.slidingWindow(ANON_AI_LIMIT, '24 h'),
+    prefix: 'ratelimit:anon:claims',
+    analytics: true,
+  }),
+}
+
+function getClientIp(req: Request): string {
+  const fwd = req.headers.get('x-forwarded-for')
+  if (fwd) return fwd.split(',')[0].trim()
+  return req.headers.get('x-real-ip')
+    ?? req.headers.get('cf-connecting-ip')
+    ?? 'unknown'
+}
+
+export async function checkAnonRateLimit(req: Request, tool: AnonTool) {
+  const ip = getClientIp(req)
+  return anonLimiters[tool].limit(ip)
+}
+
+export async function peekAnonRateLimit(req: Request, tool: AnonTool) {
+  const ip = getClientIp(req)
+  const { remaining, reset } = await anonLimiters[tool].getRemaining(ip)
+  return { success: remaining > 0, limit: ANON_AI_LIMIT, remaining, reset }
 }
 
 /**
@@ -82,15 +120,18 @@ export function rateLimitHeaders(result: { limit: number; remaining: number; res
 }
 
 /**
- * Peek at the authenticated user's AI rate limit without consuming a request.
+ * Peek at the caller's AI rate limit without consuming a request.
+ * - Authenticated: returns the tier-based shared limit.
+ * - Anonymous: returns the IP-based per-tool limit (requires `tool`).
  * Used by the /api/ai/usage endpoint to show current quota in the UI.
  */
-export async function peekAiRateLimit() {
+export async function peekAiRateLimit(req?: Request, tool?: AnonTool) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
   if (!user) {
-    return { success: false, limit: AI_LIMITS.free, remaining: 0, reset: Date.now() }
+    if (req && tool) return peekAnonRateLimit(req, tool)
+    return { success: false, limit: ANON_AI_LIMIT, remaining: ANON_AI_LIMIT, reset: Date.now() }
   }
 
   const { data: subscription } = await supabase

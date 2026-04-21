@@ -1,7 +1,7 @@
 // src/app/api/ai/eligibility/route.ts — replaces sprint2 version
 import { getAnthropic, MODEL, SYSTEM_BASE, streamText } from '@/lib/anthropic'
 import { createClient } from '@/lib/supabase/server'
-import { checkRateLimit, rateLimitHeaders } from '@/lib/ratelimit'
+import { checkRateLimit, checkAnonRateLimit, rateLimitHeaders } from '@/lib/ratelimit'
 import { getRAGContext } from '@/lib/rag'
 import type { SubscriptionTier } from '@/types/database'
 
@@ -20,36 +20,40 @@ When analyzing eligibility:
 
 export async function POST(req: Request) {
   try {
-    // Get authenticated user and their subscription tier
+    // Detect auth state — public users get IP-based rate limiting,
+    // authenticated users get their tier's limit.
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
-    if (!user) {
-      return new Response('Unauthorized', { status: 401 })
+    let rateResult: Awaited<ReturnType<typeof checkRateLimit>>
+    let tier: SubscriptionTier | 'anon'
+
+    if (user) {
+      const { data: subscription } = await supabase
+        .from('subscriptions')
+        .select('tier, status')
+        .eq('user_id', user.id)
+        .single()
+
+      const isActive = ['active', 'trialing'].includes(subscription?.status ?? '')
+      tier = (isActive ? subscription?.tier : 'free') as SubscriptionTier ?? 'free'
+      rateResult = await checkRateLimit(user.id, tier)
+    } else {
+      tier = 'anon'
+      rateResult = await checkAnonRateLimit(req, 'eligibility')
     }
 
-    const { data: subscription } = await supabase
-      .from('subscriptions')
-      .select('tier, status')
-      .eq('user_id', user.id)
-      .single()
-
-    const isActive = ['active', 'trialing'].includes(subscription?.status ?? '')
-    const tier = (isActive ? subscription?.tier : 'free') as SubscriptionTier ?? 'free'
-
-    // Check rate limit
-    const rateResult = await checkRateLimit(user.id, tier)
     const headers = rateLimitHeaders(rateResult)
 
     if (!rateResult.success) {
+      const message = tier === 'anon'
+        ? 'You\'ve used your 10 free daily analyses. Sign up for a free account to keep going.'
+        : tier === 'free'
+          ? 'You\'ve reached your daily limit of 10 AI requests. Upgrade to Ranger for 100/day.'
+          : `You've reached your daily limit. Resets at ${new Date(rateResult.reset).toLocaleTimeString()}.`
+
       return new Response(
-        JSON.stringify({
-          error: 'Rate limit exceeded',
-          message: tier === 'free'
-            ? 'You\'ve reached your daily limit of 10 AI requests. Upgrade to Ranger for 100/day.'
-            : `You've reached your daily limit. Resets at ${new Date(rateResult.reset).toLocaleTimeString()}.`,
-          reset: rateResult.reset,
-        }),
+        JSON.stringify({ error: 'Rate limit exceeded', message, reset: rateResult.reset }),
         { status: 429, headers: { 'Content-Type': 'application/json', ...headers } },
       )
     }
