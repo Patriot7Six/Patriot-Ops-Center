@@ -2,12 +2,15 @@
 // in the same shape as COMPENSATION_RATES. Used by the weekly knowledge-sync
 // job as a self-healing layer: if committed rates drift from va.gov between
 // annual updates, the fetcher catches it and the sync pushes the live values
-// to Supabase (committed values remain the review-able fallback).
+// to Supabase (committed values remain the reviewable fallback).
 //
 // Design principle: fail safe. Any error, parse miss, or failed sanity check
 // returns { ok: false } and the caller uses COMPENSATION_RATES verbatim.
-// Never return partially-parsed rates — all three tables must parse cleanly
-// and pass monotonic-by-rating sanity checks, or we abort.
+//
+// va.gov renders rates inside <va-table> web components (not plain <table>).
+// The 10-20% table is "tall" (rows are ratings). The 30-60% and 70-100%
+// tables are "wide" (columns are ratings, rows are dependent status). Both
+// shapes are handled.
 
 import { COMPENSATION_RATES, type CompensationRates, type CompRateTable } from './va-rates'
 
@@ -16,6 +19,8 @@ const USER_AGENT = 'PatriotOpsCenter-KnowledgeSync/1.0 (+https://patriot7six.com
 export type FetchResult =
   | { ok: true;  rates: CompensationRates }
   | { ok: false; error: string }
+
+type RateTarget = 'no_deps' | 'with_spouse' | 'with_spouse_and_one_child'
 
 export async function fetchLiveCompensationRates(): Promise<FetchResult> {
   let html: string
@@ -32,32 +37,43 @@ export async function fetchLiveCompensationRates(): Promise<FetchResult> {
   const effective = parseEffectiveDate(html)
   if (!effective) return { ok: false, error: 'effective-date not found on va.gov page' }
 
-  const no_deps                   = parseRatingTable(html, ['veteran alone', 'without a spouse', 'no dependents'])
-  const with_spouse               = parseRatingTable(html, ['with spouse only', 'veteran with spouse'])
-  const with_spouse_and_one_child = parseRatingTable(html, ['with spouse and 1 child', 'spouse and one child'])
-
-  if (!no_deps || !with_spouse || !with_spouse_and_one_child) {
-    return { ok: false, error: 'rate-table parse failure — va.gov HTML structure may have changed' }
+  const rates: CompensationRates = {
+    rate_year:                 COMPENSATION_RATES.rate_year,    // not in HTML
+    effective_date:            effective,
+    cola_pct:                  COMPENSATION_RATES.cola_pct,     // not in HTML
+    source_url:                COMPENSATION_RATES.source_url,
+    no_deps:                   {},
+    with_spouse:               {},
+    with_spouse_and_one_child: {},
   }
 
-  if (!sanityCheck(no_deps, { min: 10, max: 100 }) ||
-      !sanityCheck(with_spouse, { min: 30, max: 100 }) ||
-      !sanityCheck(with_spouse_and_one_child, { min: 30, max: 100 })) {
-    return { ok: false, error: 'sanity check failed — rates not monotonic by rating' }
+  const tableRe = /<va-table\b([^>]*)>([\s\S]*?)<\/va-table>/gi
+  for (const m of html.matchAll(tableRe)) {
+    const attrs = m[1]
+    const inner = m[2]
+    const titleMatch = /table-title=["']([^"']*)["']/i.exec(attrs)
+    const title = titleMatch?.[1] ?? ''
+    // Skip "Added amounts" tables; accept empty titles (10-20% table) and
+    // "Basic monthly rates" titles.
+    if (title && !/^basic monthly rates/i.test(title)) continue
+    parseVaTableInto(inner, rates)
   }
 
-  return {
-    ok: true,
-    rates: {
-      rate_year:      COMPENSATION_RATES.rate_year,  // not in HTML; carry forward
-      effective_date: effective,
-      cola_pct:       COMPENSATION_RATES.cola_pct,   // not in HTML; carry forward
-      source_url:     COMPENSATION_RATES.source_url,
-      no_deps,
-      with_spouse,
-      with_spouse_and_one_child,
-    },
+  const EXPECTED_NO_DEPS     = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+  const EXPECTED_WITH_DEPS   = [30, 40, 50, 60, 70, 80, 90, 100]
+  if (!hasAllRatings(rates.no_deps,                   EXPECTED_NO_DEPS)   ||
+      !hasAllRatings(rates.with_spouse,               EXPECTED_WITH_DEPS) ||
+      !hasAllRatings(rates.with_spouse_and_one_child, EXPECTED_WITH_DEPS)) {
+    return { ok: false, error: 'rate-table parse incomplete — expected rating cells not found' }
   }
+
+  if (!sanityCheck(rates.no_deps)                   ||
+      !sanityCheck(rates.with_spouse)               ||
+      !sanityCheck(rates.with_spouse_and_one_child)) {
+    return { ok: false, error: 'sanity check failed — rates not monotonic by rating or out of bounds' }
+  }
+
+  return { ok: true, rates }
 }
 
 function parseEffectiveDate(html: string): string | null {
@@ -65,52 +81,96 @@ function parseEffectiveDate(html: string): string | null {
   return m ? m[0].replace(/^effective\s+/i, '').trim() : null
 }
 
-function parseRatingTable(html: string, anchors: string[]): CompRateTable | null {
-  const lower = html.toLowerCase()
-  let anchorIdx = -1
-  for (const a of anchors) {
-    anchorIdx = lower.indexOf(a.toLowerCase())
-    if (anchorIdx !== -1) break
-  }
-  if (anchorIdx === -1) return null
-
-  const tableStart = html.indexOf('<table', anchorIdx)
-  if (tableStart === -1) return null
-  const tableEnd = html.indexOf('</table>', tableStart)
-  if (tableEnd === -1) return null
-  const table = html.slice(tableStart, tableEnd)
-
-  const result: CompRateTable = {}
-  const rowRe = /<tr[^>]*>([\s\S]*?)<\/tr>/gi
-  for (const rowMatch of table.matchAll(rowRe)) {
+function parseVaTableInto(inner: string, rates: CompensationRates): void {
+  const rows: string[][] = []
+  const rowRe = /<va-table-row\b[^>]*>([\s\S]*?)<\/va-table-row>/gi
+  for (const rowMatch of inner.matchAll(rowRe)) {
     const row = rowMatch[1]
     const cells: string[] = []
-    const cellRe = /<t[dh][^>]*>([\s\S]*?)<\/t[dh]>/gi
-    for (const cellMatch of row.matchAll(cellRe)) {
-      cells.push(cellMatch[1].replace(/<[^>]+>/g, '').replace(/&nbsp;/g, ' ').trim())
+    const spanRe = /<span\b[^>]*>([\s\S]*?)<\/span>/gi
+    for (const cellMatch of row.matchAll(spanRe)) {
+      cells.push(stripTags(cellMatch[1]))
     }
-    if (cells.length < 2) continue
-    const rating = /^(\d{2,3})\s*%/.exec(cells[0])
-    // First $ amount in the row — va.gov's table may have multiple columns but
-    // the first dollar figure is the payment column.
-    const amount = /\$\s*([\d,]+\.\d{2})/.exec(cells.slice(1).join(' '))
-    if (rating && amount) {
-      result[Number(rating[1])] = Number(amount[1].replace(/,/g, ''))
-    }
+    if (cells.length > 0) rows.push(cells)
   }
-  return Object.keys(result).length >= 5 ? result : null
+  if (rows.length < 2) return
+
+  const header = rows[0]
+  const headerRatings = header.slice(1).map(extractRating)
+  const isWide = headerRatings.some(r => r !== null)
+
+  if (isWide) {
+    // Columns are ratings; rows are dependent-status labels.
+    for (const row of rows.slice(1)) {
+      const target = matchLabelToTarget(row[0])
+      if (!target) continue
+      for (let i = 0; i < headerRatings.length; i++) {
+        const rating = headerRatings[i]
+        if (rating === null) continue
+        const amount = parseAmount(row[i + 1])
+        if (amount !== null) rates[target][rating] = amount
+      }
+    }
+    return
+  }
+
+  // Tall format: column 0 is rating, column 1 is amount. Only used by the
+  // 10-20% table on va.gov, which is no_deps by definition (note on page
+  // explicitly says dependents don't raise the rate at 10-20%).
+  for (const row of rows.slice(1)) {
+    const rating = extractRating(row[0])
+    if (rating === null) continue
+    const amount = parseAmount(row[1])
+    if (amount !== null) rates.no_deps[rating] = amount
+  }
 }
 
-function sanityCheck(table: CompRateTable, bounds: { min: number; max: number }): boolean {
+function stripTags(s: string): string {
+  return s
+    .replace(/<[^>]+>/g, '')
+    .replace(/&nbsp;/gi, ' ')
+    .replace(/&#xa0;/gi, ' ')
+    .replace(/&#x2019;/gi, '’')
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+
+function extractRating(cell: string): number | null {
+  const m = /(\d{2,3})\s*%/.exec(cell)
+  if (!m) return null
+  const n = Number(m[1])
+  return (n >= 10 && n <= 100 && n % 10 === 0) ? n : null
+}
+
+function parseAmount(cell: string | undefined): number | null {
+  if (!cell) return null
+  const m = /([\d,]+\.\d{2})/.exec(cell)
+  if (!m) return null
+  const n = Number(m[1].replace(/,/g, ''))
+  return Number.isFinite(n) && n > 0 ? n : null
+}
+
+function matchLabelToTarget(label: string): RateTarget | null {
+  const norm = label.toLowerCase().replace(/\s*\([^)]*\)/g, '').replace(/\s+/g, ' ').trim()
+  if (norm === 'veteran alone')            return 'no_deps'
+  if (norm === 'with spouse')              return 'with_spouse'
+  if (norm === 'with 1 child and spouse')  return 'with_spouse_and_one_child'
+  return null
+}
+
+function hasAllRatings(table: CompRateTable, expected: number[]): boolean {
+  return expected.every(r => typeof table[r] === 'number')
+}
+
+function sanityCheck(table: CompRateTable): boolean {
   const entries = Object.entries(table)
     .map(([r, v]) => [Number(r), v] as const)
     .sort((a, b) => a[0] - b[0])
   if (entries.length < 5) return false
-  if (entries[0][0] < bounds.min || entries[entries.length - 1][0] > bounds.max) return false
   for (let i = 1; i < entries.length; i++) {
     if (entries[i][1] <= entries[i - 1][1]) return false  // must strictly increase
   }
-  // No payment should exceed $10k/month — guards against decimal-parse errors.
+  // No single monthly payment should exceed $10k — guards against decimal-parse errors.
   if (entries.some(([, v]) => v <= 0 || v > 10000)) return false
   return true
 }
