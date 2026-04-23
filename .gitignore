@@ -79,6 +79,7 @@ tmp/
 temp/
 .documents
 .docs
+Sprints
 
 package-lock.json
 
