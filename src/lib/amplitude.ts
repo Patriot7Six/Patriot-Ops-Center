@@ -41,7 +41,7 @@ export function resetUser() {
 // ── Typed event catalogue ─────────────────────────────────────────────────────
 
 export function trackSignupCompleted(props: {
-  plan_intent: 'free' | 'pro' | 'elite'
+  plan_intent: 'free' | 'elite'
 }) {
   amplitude.track('signup_completed', props)
 }

@@ -64,10 +64,10 @@ export async function POST(req: Request) {
     const isActive = ['active', 'trialing'].includes(subscription?.status ?? '')
     const tier = (isActive ? subscription?.tier : 'free') as SubscriptionTier ?? 'free'
 
-    // Career toolkit is Pro/Elite only — check feature access
+    // Career toolkit is Elite only — check feature access
     if (tier === 'free') {
       return new Response(
-        JSON.stringify({ error: 'Upgrade required', message: 'Career Toolkit requires Ranger or higher.' }),
+        JSON.stringify({ error: 'Upgrade required', message: 'Career Toolkit requires Special Ops.' }),
         { status: 403, headers: { 'Content-Type': 'application/json' } },
       )
     }

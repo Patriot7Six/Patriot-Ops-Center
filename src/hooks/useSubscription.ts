@@ -9,7 +9,6 @@ interface UseSubscriptionReturn {
   subscription: Subscription | null
   tier: SubscriptionTier
   isLoading: boolean
-  isPro: boolean
   isElite: boolean
   can: (feature: FeatureKey) => boolean
 }
@@ -59,7 +58,6 @@ export function useSubscription(): UseSubscriptionReturn {
     subscription,
     tier: isActive ? tier : 'free',
     isLoading,
-    isPro: isActive && (tier === 'pro' || tier === 'elite'),
     isElite: isActive && tier === 'elite',
     can: (feature: FeatureKey) => isActive && hasFeature(tier, feature),
   }
