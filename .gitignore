@@ -60,6 +60,7 @@ yarn-error.log*
 # ── Editor / IDE ──────────────────────────────────────────────
 .vscode/
 .idea/
+.claude/skills/
 *.swp
 *.swo
 *.suo

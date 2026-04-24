@@ -1,6 +1,7 @@
 -- ============================================================
 -- Sprint 7 — Idempotency column for the welcome-email Trigger job
--- Run AFTER 003_documents.sql
+-- Paste into Supabase Dashboard → SQL Editor → Run.
+-- Depends on: 20260301_sprint4.sql
 -- ============================================================
 -- `welcomed_at` is set by the auth callback after firing the
 -- send-welcome-email + onboarding-nudge Trigger.dev jobs, so

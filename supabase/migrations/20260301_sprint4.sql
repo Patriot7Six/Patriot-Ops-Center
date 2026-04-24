@@ -1,6 +1,7 @@
 -- ============================================================
 -- Sprint 4 — Documents Table
--- Run AFTER 002_auth_schema.sql
+-- Paste into Supabase Dashboard → SQL Editor → Run.
+-- Depends on: 20260215_sprint3.sql
 -- ============================================================
 
 DO $$ BEGIN

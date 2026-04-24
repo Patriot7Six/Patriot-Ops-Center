@@ -1,6 +1,7 @@
 -- ============================================================
--- Sprint 2 — Initial Schema
--- Run this in Supabase SQL Editor
+-- Sprint 2 — Initial Schema (benefits reference data + seed)
+-- Paste into Supabase Dashboard → SQL Editor → Run.
+-- First migration in the chain; no prerequisites.
 -- ============================================================
 
 -- Enable UUID extension

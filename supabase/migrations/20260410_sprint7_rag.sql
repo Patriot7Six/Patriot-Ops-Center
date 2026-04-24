@@ -1,3 +1,13 @@
+-- ============================================================
+-- Sprint 7 — RAG pipeline (pgvector + va_knowledge table + RPC)
+-- Paste into Supabase Dashboard → SQL Editor → Run.
+-- Depends on: 20260401_sprint7.sql
+--
+-- NOTE: the table/RPC created here get renamed by
+-- 20260420_pre_sprint9_rag_rename.sql to match the knowledge_chunks
+-- convention expected by Sprint 10+.
+-- ============================================================
+
 -- Enable pgvector (run once per project — safe to re-run)
 create extension if not exists vector with schema extensions;
 

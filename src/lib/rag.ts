@@ -19,7 +19,7 @@ export async function getRAGContext(
   try {
     const embedding = await generateEmbedding(query)
 
-    const { data, error } = await supabase.rpc('search_va_knowledge', {
+    const { data, error } = await supabase.rpc('search_knowledge_chunks', {
       query_embedding: embedding,
       match_count: options?.limit ?? 5,
       filter_category: options?.category ?? null,
