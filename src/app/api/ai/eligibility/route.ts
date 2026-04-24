@@ -3,9 +3,17 @@ import { getAnthropic, MODEL, SYSTEM_BASE, streamText } from '@/lib/anthropic'
 import { createClient } from '@/lib/supabase/server'
 import { checkRateLimit, checkAnonRateLimit, rateLimitHeaders } from '@/lib/ratelimit'
 import { getRAGContext } from '@/lib/rag'
-import { COMPENSATION_RATES, LOAN_LIMITS, EDUCATION_RATES } from '@/lib/va-rates'
+import { COMPENSATION_RATES, LOAN_LIMITS, EDUCATION_RATES, usd } from '@/lib/va-rates'
 import type { SubscriptionTier } from '@/types/database'
 
+
+function formatCompTable(table: Record<number, number>): string {
+  return Object.entries(table)
+    .map(([r, v]) => [Number(r), v] as [number, number])
+    .sort((a, b) => a[0] - b[0])
+    .map(([r, v]) => `- ${r}%: ${usd(v)}/mo`)
+    .join('\n')
+}
 
 function buildSystemPrompt(): string {
   const today = new Date().toISOString().slice(0, 10)
@@ -23,10 +31,23 @@ You are currently in the VA Eligibility Checker. Your job is to analyze the vete
 - GI Bill academic year: ${EDUCATION_RATES.academic_year}.
 - Official compensation rate source: ${c.source_url}
 
+### ${c.rate_year} Monthly VA Disability Compensation — Veteran Alone (no dependents)
+${formatCompTable(c.no_deps)}
+
+### ${c.rate_year} Monthly VA Disability Compensation — Veteran with Spouse (no children)
+(Dependent amounts only apply at 30% and above.)
+${formatCompTable(c.with_spouse)}
+
+### ${c.rate_year} Monthly VA Disability Compensation — Veteran with Spouse + 1 Child
+(Dependent amounts only apply at 30% and above. A child aged 18–23 counts as a dependent ONLY if they are an unmarried full-time student and the veteran has filed VA Form 21-674 to establish the schoolchild dependent.)
+${formatCompTable(c.with_spouse_and_one_child)}
+
+When a veteran provides their rating and dependent situation, compute and state the exact monthly amount from the tables above. Show the veteran-alone figure as the floor and, if dependents apply, the with-dependents figure. Do not defer to an external link for a rate that is present in these tables.
+
 ## Strict citation rules — NON-NEGOTIABLE
-- Every dollar amount, rating threshold, Priority Group number, form number, deadline, or expiration date you mention MUST come from either (a) the "Verified Current VA Information" block below, or (b) the rate anchor above. Never invent one from memory.
-- If a specific figure is not present in either source, say "I don't have that figure in my current data — please check ${c.source_url}" and move on. Do NOT guess or approximate.
-- Never cite a rate year earlier than ${c.rate_year}. If you catch yourself reaching for an older rate year from memory, STOP and use the Verified Current VA Information block instead.
+- Every dollar amount, rating threshold, Priority Group number, form number, deadline, or expiration date you mention MUST come from either (a) the rate tables/anchor above, or (b) the "Verified Current VA Information" block below. Never invent one from memory.
+- If a figure is genuinely not present in either source, say "I don't have that specific figure in my current data — please check ${c.source_url}" and move on. Do NOT guess or approximate. But if a compensation rate IS in the tables above, you MUST give it directly — do not punt to the link.
+- Never cite a rate year earlier than ${c.rate_year}. If you catch yourself reaching for an older rate year from memory, STOP and use the tables above or the Verified Current VA Information block instead.
 - VA Healthcare Priority Groups are counterintuitive: Group 1 is the HIGHEST priority (50%+ service-connected or TDIU). Group 8 is the lowest. A 50%-rated veteran is Priority Group 1, not Group 3. Do not invert this.
 
 ## Response structure
