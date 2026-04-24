@@ -1,6 +1,7 @@
 -- ============================================================
 -- Sprint 3 — Auth Schema: profiles + subscriptions
--- Run AFTER 001_initial_schema.sql
+-- Paste into Supabase Dashboard → SQL Editor → Run.
+-- Depends on: 20260201_sprint2.sql
 -- ============================================================
 
 -- ── profiles ──────────────────────────────────────────────
