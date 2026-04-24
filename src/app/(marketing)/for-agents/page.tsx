@@ -52,7 +52,7 @@ export default function ForAgentsPage() {
             </p>
             <div className="flex gap-3 justify-center">
               <Button variant="primary" size="lg" asChild>
-                <Link href="/agent/apply">Apply to join →</Link>
+                <Link href="/signup?redirectTo=/agent/apply">Apply to join →</Link>
               </Button>
               <Button variant="outline" size="lg" asChild>
                 <Link href="#how-it-works">How it works</Link>
@@ -119,7 +119,7 @@ export default function ForAgentsPage() {
               Application takes 3 minutes. Most applicants are verified and active the same day.
             </p>
             <Button variant="primary" size="lg" asChild>
-              <Link href="/agent/apply">Apply to join →</Link>
+              <Link href="/signup?redirectTo=/agent/apply">Apply to join →</Link>
             </Button>
           </div>
         </section>
