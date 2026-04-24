@@ -19,6 +19,7 @@ function SignupForm() {
   const router = useRouter()
   const params = useSearchParams()
   const plan = params.get('plan') // 'elite' | null
+  const redirectTo = params.get('redirectTo') ?? '/onboarding'
 
   const [fullName, setFullName] = useState('')
   const [email, setEmail] = useState('')
@@ -38,7 +39,7 @@ function SignupForm() {
         password,
         options: {
           data: { full_name: fullName },
-          emailRedirectTo: `${window.location.origin}/api/auth/callback?next=/onboarding`,
+          emailRedirectTo: `${window.location.origin}/api/auth/callback?next=${encodeURIComponent(redirectTo)}`,
         },
       })
       if (error) { setError(error.message); return }
@@ -47,7 +48,7 @@ function SignupForm() {
       if (data.session) {
         // Optionally store plan preference to trigger checkout post-onboarding
         if (plan) sessionStorage.setItem('pending_plan', plan)
-        router.push('/onboarding')
+        router.push(redirectTo)
         router.refresh()
       } else {
         setConfirmSent(true)
@@ -133,7 +134,12 @@ function SignupForm() {
 
       <p className="text-center text-sm text-slate-500 mt-4">
         Already have an account?{' '}
-        <Link href="/login" className="text-gold-500 hover:text-gold-400 font-medium">Sign in</Link>
+        <Link
+          href={redirectTo === '/onboarding' ? '/login' : `/login?redirectTo=${encodeURIComponent(redirectTo)}`}
+          className="text-gold-500 hover:text-gold-400 font-medium"
+        >
+          Sign in
+        </Link>
       </p>
     </div>
   )
