@@ -9,7 +9,7 @@ export async function POST(request: NextRequest) {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-    // Check Pro/Elite subscription
+    // Check Elite subscription (Sprint 8: free|elite only)
     const { data: subscription } = await supabase
       .from('subscriptions')
       .select('tier, status')
@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
 
     const isActive = ['active', 'trialing'].includes(subscription?.status ?? '')
     const tier = ((isActive ? subscription?.tier : 'free') as SubscriptionTier) ?? 'free'
-    const hasTier = tier === 'pro' || tier === 'elite'
+    const hasTier = tier === 'elite'
 
     if (!hasTier) {
       return NextResponse.json({ error: 'Upgrade required' }, { status: 403 })

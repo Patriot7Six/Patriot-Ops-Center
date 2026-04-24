@@ -64,7 +64,6 @@ export default async function DashboardPage() {
         <h1 className="text-white font-semibold">Dashboard</h1>
         <span className={`text-xs font-semibold px-2.5 py-1 rounded-full border ${
           tier === 'elite' ? 'bg-purple-500/10 border-purple-500/30 text-purple-300'
-          : tier === 'pro'  ? 'bg-gold-500/10  border-gold-500/30 text-gold-400'
           :                   'bg-white/5 border-white/10 text-slate-400'
         }`}>
           {plan.name}
@@ -150,14 +149,14 @@ export default async function DashboardPage() {
         {tier === 'free' && (
           <section className="rounded-2xl border border-white/[0.07] bg-white/[0.02] p-6 flex items-center gap-6">
             <div className="flex-1">
-              <p className="text-white font-semibold mb-1">Unlock unlimited access with Ranger</p>
-              <p className="text-sm text-slate-400">Unlimited VA checks, Claims Copilot, document upload, and career toolkit.</p>
+              <p className="text-white font-semibold mb-1">Unlock everything with Special Ops</p>
+              <p className="text-sm text-slate-400">Unlimited AI tools, document analysis, career toolkit, priority reviews, and a dedicated advisor.</p>
             </div>
             <Link
               href="/dashboard/billing"
               className="shrink-0 bg-gold-500 hover:bg-gold-400 text-navy-950 font-bold text-sm px-5 py-2.5 rounded-xl transition-colors"
             >
-              Upgrade — $34/mo
+              Upgrade — $124/mo
             </Link>
           </section>
         )}

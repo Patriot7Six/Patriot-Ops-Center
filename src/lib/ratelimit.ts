@@ -10,8 +10,7 @@ const redis = new Redis({
 })
 
 // ── Rate limit tiers ──────────────────────────────────────────────────────────
-// Free users: 10 AI requests / 24 hours
-// Pro users:  100 AI requests / 24 hours
+// Free users:  10 AI requests / 24 hours
 // Elite users: 500 AI requests / 24 hours
 //
 // These are per-user limits keyed on their Supabase user ID.
@@ -19,7 +18,6 @@ const redis = new Redis({
 
 export const AI_LIMITS: Record<SubscriptionTier, number> = {
   free: 10,
-  pro: 100,
   elite: 500,
 }
 
@@ -32,12 +30,6 @@ const limiters: Record<SubscriptionTier, Ratelimit> = {
     redis,
     limiter: Ratelimit.slidingWindow(AI_LIMITS.free, '24 h'),
     prefix: 'ratelimit:free',
-    analytics: true,
-  }),
-  pro: new Ratelimit({
-    redis,
-    limiter: Ratelimit.slidingWindow(AI_LIMITS.pro, '24 h'),
-    prefix: 'ratelimit:pro',
     analytics: true,
   }),
   elite: new Ratelimit({

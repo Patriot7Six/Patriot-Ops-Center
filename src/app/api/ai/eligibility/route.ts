@@ -49,7 +49,7 @@ export async function POST(req: Request) {
       const message = tier === 'anon'
         ? 'You\'ve used your 10 free daily analyses. Sign up for a free account to keep going.'
         : tier === 'free'
-          ? 'You\'ve reached your daily limit of 10 AI requests. Upgrade to Ranger for 100/day.'
+          ? 'You\'ve reached your daily limit of 10 AI requests. Upgrade to Special Ops for 100/day.'
           : `You've reached your daily limit. Resets at ${new Date(rateResult.reset).toLocaleTimeString()}.`
 
       return new Response(

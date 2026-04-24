@@ -31,11 +31,13 @@ export async function POST(request: NextRequest) {
         const sub = event.data.object as Stripe.Subscription
         const customerId = sub.customer as string
 
-        // Determine tier from price ID
+        // Determine tier from price ID (Sprint 8: tiers collapsed to free|elite)
         let tier: SubscriptionTier = 'free'
         const priceId = sub.items.data[0]?.price.id
-        if (priceId === process.env.STRIPE_PRICE_ELITE_MONTHLY) tier = 'elite'
-        else if (priceId === process.env.STRIPE_PRICE_PRO_MONTHLY) tier = 'pro'
+        if (
+          priceId === process.env.STRIPE_PRICE_ELITE_MONTHLY ||
+          priceId === process.env.STRIPE_PRICE_ELITE_YEARLY
+        ) tier = 'elite'
 
         const status = sub.status as SubscriptionStatus
 
@@ -69,7 +71,7 @@ export async function POST(request: NextRequest) {
 
             if (user?.email) {
               const firstName = profile?.full_name?.split(' ')[0] ?? 'Veteran'
-              const planName = tier === 'elite' ? 'Special Ops' : 'Ranger'
+              const planName = 'Special Ops'
               const nextBillingDate = new Date(sub.current_period_end * 1000)
                 .toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
               await sendSubscriptionEmail(user.email, firstName, planName, nextBillingDate)
