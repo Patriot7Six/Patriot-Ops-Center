@@ -3,7 +3,7 @@ import { NextResponse, type NextRequest } from 'next/server'
 
 type CookieToSet = { name: string; value: string; options: CookieOptions }
 
-const PUBLIC_ROUTES = ['/', '/login', '/signup', '/pricing', '/benefits']
+const PUBLIC_ROUTES = ['/', '/login', '/signup', '/pricing', '/benefits', '/for-agents', '/referral']
 const DASHBOARD_ROUTE = '/dashboard'
 
 export async function proxy(request: NextRequest) {
