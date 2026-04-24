@@ -14,7 +14,7 @@ interface FeatureGateProps {
   fallback?: ReactNode
 }
 
-export function FeatureGate({ feature, requiredTier = 'pro', children, fallback }: FeatureGateProps) {
+export function FeatureGate({ feature, requiredTier = 'elite', children, fallback }: FeatureGateProps) {
   const { can, isLoading } = useSubscription()
 
   if (isLoading) return <div className="animate-pulse bg-white/5 rounded-xl h-24 w-full" />

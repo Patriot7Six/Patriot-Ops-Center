@@ -25,7 +25,7 @@ export const renewalReminderJob = task({
     amountUsd: number
   }) => {
     const firstName = payload.fullName?.split(' ')[0] ?? 'Veteran'
-    const planName = payload.tier === 'elite' ? 'Special Ops' : 'Ranger'
+    const planName = 'Special Ops'
     const renewal = new Date(payload.renewalDate).toLocaleDateString('en-US', {
       month: 'long', day: 'numeric', year: 'numeric',
     })
@@ -62,7 +62,7 @@ export const cancellationFollowUpJob = task({
     await wait.for({ hours: 24 })
 
     const firstName = payload.fullName?.split(' ')[0] ?? 'Veteran'
-    const planName = payload.tier === 'elite' ? 'Special Ops' : 'Ranger'
+    const planName = 'Special Ops'
 
     await getResend().emails.send({
       from: FROM,
@@ -96,7 +96,7 @@ export const failedPaymentDunningJob = task({
     attemptNumber: 1 | 2 | 3
   }) => {
     const firstName = payload.fullName?.split(' ')[0] ?? 'Veteran'
-    const planName = payload.tier === 'elite' ? 'Special Ops' : 'Ranger'
+    const planName = 'Special Ops'
 
     const subject = payload.attemptNumber === 1
       ? `Action needed: payment failed for your ${planName} plan`

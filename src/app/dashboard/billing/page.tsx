@@ -68,7 +68,7 @@ function CurrentPlanCard({ subscription, tier }: { subscription: ReturnType<type
     <div className="bg-white/[0.03] border border-white/[0.07] rounded-2xl p-6 flex items-start justify-between gap-4">
       <div>
         <p className="text-xs text-slate-500 mb-1">Current Plan</p>
-        <p className="text-xl font-bold text-white capitalize">{getPlanByTier(tier as 'free' | 'pro' | 'elite').name}</p>
+        <p className="text-xl font-bold text-white capitalize">{getPlanByTier(tier as 'free' | 'elite').name}</p>
         {periodEnd && (
           <p className="text-xs text-slate-500 mt-1">
             {subscription?.cancel_at_period_end ? `Cancels ${periodEnd}` : `Renews ${periodEnd}`}

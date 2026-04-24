@@ -32,35 +32,20 @@ const PLANS = [
     ],
   },
   {
-    name: 'Ranger',
-    subtitle: 'Most popular',
-    price: 34,
+    name: 'Special Ops',
+    subtitle: 'Everything included',
+    price: 124,
     period: '/month',
-    description: 'Everything you need to maximize your benefits.',
+    description: 'Unlimited AI tools, priority reviews, and white-glove advisor support.',
     featured: true,
-    cta: 'Start Ranger',
-    href: '/signup?plan=pro',
+    cta: 'Start Special Ops',
+    href: '/signup?plan=elite',
     features: [
       { text: 'Everything in Patriot', included: true },
       { text: 'Unlimited VA Eligibility checks', included: true },
       { text: 'Unlimited Claims Copilot', included: true },
       { text: 'Document upload & AI analysis', included: true },
       { text: 'Career transition toolkit', included: true },
-      { text: 'Priority claim reviews', included: false },
-      { text: 'Dedicated success advisor', included: false },
-    ],
-  },
-  {
-    name: 'Special Ops',
-    subtitle: 'White-glove service',
-    price: 124,
-    period: '/month',
-    description: 'Concierge-level support for complex benefit situations.',
-    featured: false,
-    cta: 'Start Special Ops',
-    href: '/signup?plan=elite',
-    features: [
-      { text: 'Everything in Ranger', included: true },
       { text: 'Priority claim reviews', included: true },
       { text: 'Dedicated success advisor', included: true },
       { text: '1-on-1 strategy sessions (2/month)', included: true },
@@ -85,7 +70,7 @@ const FAQ = [
   },
   {
     q: 'What if I need help filing a claim?',
-    a: 'The Claims Copilot walks you through the process step-by-step. Ranger and Special Ops users also get access to priority claim reviews and direct advisor support.',
+    a: 'The Claims Copilot walks you through the process step-by-step. Special Ops users also get access to priority claim reviews and direct advisor support.',
   },
 ]
 
@@ -110,7 +95,7 @@ export default function PricingPage() {
         {/* Plans */}
         <section className="pb-20">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
               {PLANS.map(plan => (
                 <div
                   key={plan.name}

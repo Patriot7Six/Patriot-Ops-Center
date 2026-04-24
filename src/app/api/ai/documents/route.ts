@@ -47,12 +47,12 @@ export async function POST(req: Request) {
     const isActive = ['active', 'trialing'].includes(subscription?.status ?? '')
     const tier = ((isActive ? subscription?.tier : 'free') as SubscriptionTier) ?? 'free'
 
-    // Document analysis is Pro/Elite only
+    // Document analysis is Elite only
     if (tier === 'free') {
       return new Response(
         JSON.stringify({
           error: 'Upgrade required',
-          message: 'Document analysis requires Ranger or higher.',
+          message: 'Document analysis requires Special Ops.',
         }),
         { status: 403, headers: { 'Content-Type': 'application/json' } },
       )

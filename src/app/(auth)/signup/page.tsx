@@ -18,7 +18,7 @@ export default function SignupPage() {
 function SignupForm() {
   const router = useRouter()
   const params = useSearchParams()
-  const plan = params.get('plan') // 'pro' | 'elite' | null
+  const plan = params.get('plan') // 'elite' | null
 
   const [fullName, setFullName] = useState('')
   const [email, setEmail] = useState('')
@@ -79,7 +79,7 @@ function SignupForm() {
     <div>
       <div className="mb-8 text-center">
         <h1 className="text-3xl font-extrabold text-white mb-2">
-          {plan === 'pro' ? 'Start your Ranger plan' : plan === 'elite' ? 'Start your Special Ops plan' : 'Create your account'}
+          {plan === 'elite' ? 'Start your Special Ops plan' : 'Create your account'}
         </h1>
         <p className="text-slate-400 text-sm">
           {plan ? 'Create an account, then complete setup.' : 'Free to start. No credit card required.'}
