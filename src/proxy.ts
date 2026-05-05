@@ -1,5 +1,6 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
+import { BETA_GATE_COOKIE, verifyGateToken } from '@/lib/beta-gate'
 
 type CookieToSet = { name: string; value: string; options: CookieOptions }
 
@@ -7,6 +8,38 @@ const PUBLIC_ROUTES = ['/', '/login', '/signup', '/pricing', '/benefits', '/for-
 const DASHBOARD_ROUTE = '/dashboard'
 
 export async function proxy(request: NextRequest) {
+  const { pathname } = request.nextUrl
+
+  // ── Beta access gate ───────────────────────────────────────────────────────
+  // Sits in front of everything (pages and APIs). Bypasses: the gate page
+  // itself, the gate API, Next internals, and static assets.
+  const betaPassword = process.env.BETA_ACCESS_PASSWORD
+  const isGateExempt =
+    pathname === '/beta-gate' ||
+    pathname.startsWith('/beta-gate/') ||
+    pathname === '/api/beta-gate' ||
+    pathname.startsWith('/_next') ||
+    pathname.startsWith('/favicon') ||
+    pathname === '/robots.txt' ||
+    pathname === '/sitemap.xml'
+
+  if (betaPassword && !isGateExempt) {
+    const token = request.cookies.get(BETA_GATE_COOKIE)?.value
+    const ok = await verifyGateToken(token, betaPassword)
+    if (!ok) {
+      // For API requests return 401 instead of redirecting, so XHR clients
+      // get a useful error rather than HTML.
+      if (pathname.startsWith('/api/')) {
+        return NextResponse.json({ error: 'Beta access required' }, { status: 401 })
+      }
+      const url = request.nextUrl.clone()
+      url.pathname = '/beta-gate'
+      url.search = ''
+      url.searchParams.set('redirectTo', pathname + request.nextUrl.search)
+      return NextResponse.redirect(url)
+    }
+  }
+
   let supabaseResponse = NextResponse.next({ request })
 
   const supabase = createServerClient(
@@ -28,8 +61,6 @@ export async function proxy(request: NextRequest) {
 
   // IMPORTANT: do not add logic between createServerClient and getUser()
   const { data: { user } } = await supabase.auth.getUser()
-
-  const { pathname } = request.nextUrl
 
   const isPublic =
     PUBLIC_ROUTES.some(r => pathname === r || pathname.startsWith(r + '/')) ||
