@@ -74,10 +74,12 @@ export default function HomePage() {
                 { number: '200K',      label: 'Transition Each Year'       },
                 { number: '~36%',      label: 'Claims Denied at First Try' },
                 { number: '131 Days',  label: 'Avg. Wait for a Decision'   },
-              ].map((stat, i) => (
+                { number: '~3.0%',     label: 'Veteran Unemployment Rate'   },
+                { number: '1 in 3',    label: 'Veterans Underemployed'     },
+              ].map((stat, i, arr) => (
                 <div
                   key={stat.label}
-                  className={`px-10 text-center ${i < 3 ? 'border-r border-navy-800' : ''}`}
+                  className={`px-10 text-center ${i < arr.length - 1 ? 'border-r border-navy-800' : ''}`}
                 >
                   <div className="text-[2rem] font-extrabold text-gold-400 leading-none mb-1">{stat.number}</div>
                   <div className="text-xs text-navy-400 tracking-widest uppercase">{stat.label}</div>
