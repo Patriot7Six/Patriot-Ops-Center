@@ -4,7 +4,7 @@ import { BETA_GATE_COOKIE, verifyGateToken } from '@/lib/beta-gate'
 
 type CookieToSet = { name: string; value: string; options: CookieOptions }
 
-const PUBLIC_ROUTES = ['/', '/login', '/signup', '/pricing', '/benefits', '/for-agents', '/referral']
+const PUBLIC_ROUTES = ['/', '/login', '/signup', '/pricing', '/benefits', '/for-agents', '/referral', '/beta-gate']
 const DASHBOARD_ROUTE = '/dashboard'
 
 export async function proxy(request: NextRequest) {
@@ -67,6 +67,7 @@ export async function proxy(request: NextRequest) {
     pathname.startsWith('/api/stripe') ||
     pathname.startsWith('/api/auth') ||
     pathname.startsWith('/api/ai') ||
+    pathname === '/api/beta-gate' ||
     pathname.startsWith('/_next') ||
     pathname.startsWith('/favicon')
 
