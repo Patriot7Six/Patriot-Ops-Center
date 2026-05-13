@@ -68,21 +68,25 @@ export default function HomePage() {
               </Link>
             </div>
 
-            <div className="flex flex-wrap items-center justify-center border-t border-navy-800 pt-10 animate-in delay-4">
+            <div className="grid grid-cols-3 gap-y-14 border-t border-navy-800 pt-12 animate-in delay-4">
               {[
                 { number: '17.6M',     label: 'Veterans Nationwide'        },
                 { number: '200K',      label: 'Transition Each Year'       },
                 { number: '~36%',      label: 'Claims Denied at First Try' },
                 { number: '131 Days',  label: 'Avg. Wait for a Decision'   },
-                { number: '~3.0%',     label: 'Veteran Unemployment Rate'   },
+                { number: '~3.0%',     label: 'Veteran Unemployment Rate'  },
                 { number: '1 in 3',    label: 'Veterans Underemployed'     },
-              ].map((stat, i, arr) => (
+              ].map((stat, i) => (
                 <div
                   key={stat.label}
-                  className={`px-10 text-center ${i < arr.length - 1 ? 'border-r border-navy-800' : ''}`}
+                  className={`group px-10 text-center cursor-default transition-transform duration-300 hover:-translate-y-1 ${i % 3 < 2 ? 'border-r border-navy-800' : ''}`}
                 >
-                  <div className="text-[2rem] font-extrabold text-gold-400 leading-none mb-1">{stat.number}</div>
-                  <div className="text-xs text-navy-400 tracking-widest uppercase">{stat.label}</div>
+                  <div className="text-[2.5rem] font-extrabold text-gold-400 leading-none mb-2 transition-all duration-300 group-hover:text-gold-300 drop-shadow-[0_0_0_rgba(251,191,36,0)] group-hover:drop-shadow-[0_0_18px_rgba(251,191,36,0.45)]">
+                    {stat.number}
+                  </div>
+                  <div className="text-xs text-navy-400 tracking-widest uppercase transition-colors duration-300 group-hover:text-gold-400">
+                    {stat.label}
+                  </div>
                 </div>
               ))}
             </div>
