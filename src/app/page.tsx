@@ -83,10 +83,10 @@ export default function HomePage() {
             {/* Stats bar */}
             <div className="flex flex-wrap items-center justify-center border-t border-navy-800 pt-10 animate-in delay-4">
               {[
-                { number: '22M+',  label: 'Veterans Served'    },
-                { number: '200K',  label: 'Annual Transitions' },
-                { number: '$10K+', label: 'Avg. Salary Boost'  },
-                { number: '72%',   label: 'Claims Success Rate'},
+                { number: '17.6M',     label: 'Veterans Nationwide'        },
+                { number: '200K',      label: 'Transition Each Year'       },
+                { number: '~36%',      label: 'Claims Denied at First Try' },
+                { number: '131 Days',  label: 'Avg. Wait for a Decision'   },
               ].map((stat, i) => (
                 <div
                   key={stat.label}
