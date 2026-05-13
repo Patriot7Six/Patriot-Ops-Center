@@ -1,6 +1,6 @@
 {
   "name": "Patriot Ops Center",
-  "image": "mcr.microsoft.com/devcontainers/typescript-node:1-20-bullseye",
+  "image": "mcr.microsoft.com/devcontainers/typescript-node:1-22-bookworm",
 
   // ── Features ───────────────────────────────────────────────────────────────
   // Only using the verified official GitHub feature here.
@@ -27,7 +27,9 @@
         "aaron-bond.better-comments",
         "supabase.vscode-supabase",
         "mikestead.dotenv",
-        "chromatic.storybook-vscode"
+        "chromatic.storybook-vscode",
+        "vitest.explorer",
+        "ms-playwright.playwright"
       ],
       "settings": {
         "typescript.tsdk": "node_modules/typescript/lib",
@@ -48,17 +50,18 @@
   },
 
   // ── Ports forwarded automatically ──────────────────────────────────────────
-  "forwardPorts": [3000, 6006, 54321, 54322],
+  "forwardPorts": [3000, 6006, 54321, 54322, 54323],
   "portsAttributes": {
     "3000":  { "label": "Next.js App",      "onAutoForward": "openPreview" },
     "6006":  { "label": "Storybook",        "onAutoForward": "notify"      },
-    "54321": { "label": "Supabase DB",      "onAutoForward": "silent"      },
-    "54322": { "label": "Supabase Studio",  "onAutoForward": "silent"      }
+    "54321": { "label": "Supabase API",     "onAutoForward": "silent"      },
+    "54322": { "label": "Supabase DB",      "onAutoForward": "silent"      },
+    "54323": { "label": "Supabase Studio",  "onAutoForward": "silent"      }
   },
 
   // ── Runs once when the container is first created ──────────────────────────
-  // Installs Doppler CLI, Stripe CLI, and project npm dependencies.
-  "postCreateCommand": "bash .devcontainer/install-tools.sh && npm install",
+  // Installs Doppler CLI, Stripe CLI, project npm dependencies, and Playwright browsers.
+  "postCreateCommand": "bash .devcontainer/install-tools.sh && npm ci && npx playwright install --with-deps chromium",
 
   // ── Runs every time the container starts ───────────────────────────────────
   "postStartCommand": "bash .devcontainer/post-start.sh",
