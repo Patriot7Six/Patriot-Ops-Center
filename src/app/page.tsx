@@ -459,12 +459,8 @@ export default function HomePage() {
                     </span>
                   </div>
                   <div className="flex items-baseline gap-0.5">
-                    <div className="text-[2.2rem] font-black text-navy-50 leading-none">
-                      <sup className="text-base align-super">$</sup>34
-                    </div>
-                    <span className="text-sm text-navy-400 ml-1">/month</span>
+                    <div className="text-[2.2rem] font-black text-navy-50 leading-none">TBD</div>
                   </div>
-                  <div className="text-xs text-gold-600 mt-1">or $299/year — save 2 months</div>
                 </div>
                 <ul className="space-y-2.5 flex-1 mb-6">
                   {[
@@ -499,12 +495,8 @@ export default function HomePage() {
                     Elite
                   </span>
                   <div className="flex items-baseline gap-0.5">
-                    <div className="text-[2.2rem] font-black text-navy-50 leading-none">
-                      <sup className="text-base align-super">$</sup>124
-                    </div>
-                    <span className="text-sm text-navy-400 ml-1">/month</span>
+                    <div className="text-[2.2rem] font-black text-navy-50 leading-none">TBD</div>
                   </div>
-                  <div className="text-xs text-gold-600 mt-1">or $999/year — best value</div>
                 </div>
                 <ul className="space-y-2.5 flex-1 mb-6">
                   {[

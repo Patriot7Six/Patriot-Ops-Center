@@ -396,7 +396,7 @@ export default function HomePage() {
                 },
                 {
                   badge: 'Most Popular', badgeColor: 'gold',
-                  price: '$34', sub: 'or $299/year — save 2 months',
+                  price: 'TBD', sub: '',
                   features: ['Everything in Free', 'Unlimited AI Resume Versions', 'Unlimited Interview Prep', 'Salary Insights + Scripts', 'Unlimited Job Listings', 'Cover Letter Generator'],
                   cta: 'Get Early Access',
                   ctaStyle: 'primary',
@@ -404,7 +404,7 @@ export default function HomePage() {
                 },
                 {
                   badge: 'Elite', badgeColor: 'navy',
-                  price: '$124', sub: 'or $999/year — best value',
+                  price: 'TBD', sub: '',
                   features: ['Everything in Pro', 'Monthly 1-on-1 Coaching', 'Resume + LinkedIn Pro Review', 'Direct Employer Introductions', 'Clearance Marketplace Access', 'AI Career Coach (Persistent)'],
                   cta: 'Get Early Access',
                   ctaStyle: 'outline',
@@ -435,9 +435,9 @@ export default function HomePage() {
                     </span>
                     <div className="flex items-baseline gap-0.5">
                       <div className="text-[2.2rem] font-black text-navy-50 leading-none">{tier.price}</div>
-                      {tier.price !== '$0' && <span className="text-sm text-navy-400 ml-1">/month</span>}
+                      {tier.price.startsWith('$') && tier.price !== '$0' && <span className="text-sm text-navy-400 ml-1">/month</span>}
                     </div>
-                    <div className={tier.price === '$0' ? 'text-sm text-navy-400 mt-1' : 'text-xs text-gold-600 mt-1'}>{tier.sub}</div>
+                    {tier.sub && <div className={tier.price === '$0' ? 'text-sm text-navy-400 mt-1' : 'text-xs text-gold-600 mt-1'}>{tier.sub}</div>}
                   </div>
                   <ul className="space-y-2.5 flex-1 mb-6">
                     {tier.features.map(f => (
