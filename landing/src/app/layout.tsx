@@ -38,10 +38,48 @@ export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
 }
 
+const organizationSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'Patriot Ops Center',
+  url: siteUrl,
+  logo: `${siteUrl}/logo.png`,
+  description:
+    'AI-powered platform helping veterans navigate VA benefits, file stronger claims, and transition to civilian careers.',
+  founder: {
+    '@type': 'Person',
+    name: 'Bradley Baker',
+    jobTitle: 'Founder',
+    description: 'U.S. Army Veteran & Founder, Patriot Ops Center',
+  },
+  sameAs: [] as string[],
+}
+
+const websiteSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'Patriot Ops Center',
+  url: siteUrl,
+  description:
+    'VA benefits guidance, claims support, and career transition tools — built for those who served.',
+  publisher: {
+    '@type': 'Organization',
+    name: 'Patriot Ops Center',
+  },
+}
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={inter.variable}>
       <body className="min-h-screen bg-navy-950 text-white antialiased">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
+        />
         {children}
       </body>
     </html>

@@ -3,9 +3,46 @@ import { Navbar } from '@/components/Navbar'
 import { Footer } from '@/components/Footer'
 import { WaitlistForm } from '@/components/WaitlistForm'
 
+const faqs: { q: string; a: string }[] = [
+  {
+    q: 'When will Patriot Ops Center launch?',
+    a: "We're actively building. Core features — Benefits Navigator, Claims Copilot, MOS Translator, Resume Analyzer, Career Chat, and Document Vault — are all in development. Join the waitlist and we'll email you the moment early access opens.",
+  },
+  {
+    q: 'Will Benefits Navigator stay free forever?',
+    a: 'Yes. Benefits Navigator, Claims Copilot, and the 1-year transition timeline will be permanently free for every veteran. No account required for the free tools.',
+  },
+  {
+    q: 'Is my DD214 secure?',
+    a: 'When launched, documents will be stored encrypted at rest in a veteran-owned Supabase tenant with row-level security. Only you can access your files. We never sell veteran data — that is a hard line.',
+  },
+  {
+    q: 'What happens when I join the waitlist?',
+    a: "You get a confirmation email. We'll notify you as we hit launch milestones — private early access first, then public launch. No spam, just launch updates.",
+  },
+  {
+    q: 'Do you work with VSOs, law firms, or TAP programs?',
+    a: "Yes — organizational partnerships are in our launch plan. We'll offer white-labeled tenants with admin dashboards, bulk licensing, and a DoD integration path for TAP. Join the waitlist and reply to the confirmation email with your org details to get on the partner list.",
+  },
+]
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map(({ q, a }) => ({
+    '@type': 'Question',
+    name: q,
+    acceptedAnswer: { '@type': 'Answer', text: a },
+  })),
+}
+
 export default function HomePage() {
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
       <Navbar />
       <main>
 
@@ -594,28 +631,7 @@ export default function HomePage() {
             </div>
 
             <div className="flex flex-col gap-3">
-              {[
-                {
-                  q: 'When will Patriot Ops Center launch?',
-                  a: 'We\'re actively building. Core features — Benefits Navigator, Claims Copilot, MOS Translator, Resume Analyzer, Career Chat, and Document Vault — are all in development. Join the waitlist and we\'ll email you the moment early access opens.',
-                },
-                {
-                  q: 'Will Benefits Navigator stay free forever?',
-                  a: 'Yes. Benefits Navigator, Claims Copilot, and the 1-year transition timeline will be permanently free for every veteran. No account required for the free tools.',
-                },
-                {
-                  q: 'Is my DD214 secure?',
-                  a: 'When launched, documents will be stored encrypted at rest in a veteran-owned Supabase tenant with row-level security. Only you can access your files. We never sell veteran data — that is a hard line.',
-                },
-                {
-                  q: 'What happens when I join the waitlist?',
-                  a: 'You get a confirmation email. We\'ll notify you as we hit launch milestones — private early access first, then public launch. No spam, just launch updates.',
-                },
-                {
-                  q: 'Do you work with VSOs, law firms, or TAP programs?',
-                  a: 'Yes — organizational partnerships are in our launch plan. We\'ll offer white-labeled tenants with admin dashboards, bulk licensing, and a DoD integration path for TAP. Join the waitlist and reply to the confirmation email with your org details to get on the partner list.',
-                },
-              ].map((item, i) => (
+              {faqs.map((item, i) => (
                 <details
                   key={i}
                   className="group bg-navy-900 border border-navy-700 rounded-xl p-6 transition-colors hover:border-navy-600 open:border-gold-600/50"
