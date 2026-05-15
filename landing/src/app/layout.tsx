@@ -26,6 +26,25 @@ export const metadata: Metadata = {
     'veteran resume',
     'TAP program',
   ],
+  applicationName: 'Patriot Ops Center',
+  authors: [{ name: 'Patriot Ops Center' }],
+  creator: 'Patriot Ops Center',
+  publisher: 'Patriot Ops Center',
+  category: 'Veterans Services',
+  alternates: {
+    canonical: '/',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+      'max-video-preview': -1,
+    },
+  },
   openGraph: {
     type: 'website',
     locale: 'en_US',
@@ -34,6 +53,16 @@ export const metadata: Metadata = {
     title: 'Patriot Ops Center — Your Mission Continues',
     description:
       'VA benefits guidance, claims support, and career transition tools — built for those who served.',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Patriot Ops Center — Your Mission Continues',
+    description:
+      'VA benefits guidance, claims support, and career transition tools — built for those who served.',
+  },
+  icons: {
+    icon: '/logo.svg',
+    apple: '/logo.png',
   },
   metadataBase: new URL(siteUrl),
 }
